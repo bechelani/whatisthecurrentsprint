@@ -5,106 +5,24 @@
     <meta name="HandheldFriendly" content="True">
     <meta name="MobileOptimized" content="320">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title>What is the current sprint?</title>
+
     <base href="/" />
 
     <link href='https://fonts.googleapis.com/css?family=Merriweather:700,300,400,900' rel='stylesheet' type='text/css'>
-    <style>
-        body {
-            font-family: Merriweather, serif;
-            color: #444;
-        }
-
-        h1 {
-            font-size: 4em;
-            margin-top: 10px;
-        }
-
-        h2 {
-            margin-bottom:5px;
-            font-size: 1.1em;
-        }
-
-        small {
-            font-size: 10px;
-        }
-
-        table {
-            border-collapse: collapse;
-        }
-
-        table, th, td {
-            border: 1px solid #ccc;
-            padding: 5px;
-        }
-
-        .container {
-            text-align: center;
-            margin: 5%;
-        }
-
-        .i {
-            font-style: italic;
-        }
-
-        .sprint {
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            font-size: 92px;
-            color: #fff;
-            line-height: 300px;
-            text-align: center;
-            margin: 60px auto;
-        }
-
-        .legend {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            line-height: 20px;
-            text-align: center;
-            margin: 0 auto;
-            color: #fff;
-        }
-
-        .development {
-            background: #228B22;
-            color: #fff;
-            padding: 2px;
-            font-style: normal;
-            font-weight: bold;
-        }
-
-        .bug-fix,
-        .code-complete {
-            background: #FFD700;
-            color: #000;
-            padding: 2px;
-            font-style: normal;
-            font-weight: bold;
-        }
-
-        .show-stopper,
-        .code-freeze {
-            background: #DC143C;
-            color: #fff;
-            padding: 2px;
-            font-style: normal;
-            font-weight: bold;
-        }
-    </style>
+    <link href="css/main.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
     <div class="container">
-        <h1>What is the current sprint?</h1>
-        <div class="sprint code-freeze">
+        <h1>Current sprint:</h1>
+        <div class="sprint code-freeze" id="sprint">
             5.04
         </div>
-        <div style="margin: 0 auto; text-align: left; width: 60%">
-            <p><strong>Start Date: </strong> <span>March 16, 2020</span></p>
-            <p><strong>End Date: </strong> <span>April 7, 2020</span></p>
+        <div class="status">
+            <p><strong>Start Date: </strong> <span id="startDate">March 16, 2020</span></p>
+            <p><strong>End Date: </strong> <span id="endDate">April 7, 2020</span></p>
             <p><strong>Status: </strong> <span class="code-freeze">Code Freeze</span></p>
             <p><strong>Can I merge Pull Requests? </strong> <span>Only your lead can if it's a <code class="show-stopper">show-stopper</code></span></p>
         </div>
@@ -134,5 +52,14 @@
             </td>
         </tr>
     </table>
+
+    <!-- <script src="js/jquery.min.js"></script>
+    <script>
+        $( document ).ready(function() {
+            jQuery.get('/sprint.json', function(data) {
+                alert(data);
+            });
+        });
+    </script> -->
 </body>
 </html>
