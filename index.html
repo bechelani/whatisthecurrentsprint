@@ -16,47 +16,50 @@
 
 <body class="">
     <div class="container">
-        <h1>Current sprint:</h1>
+        <h1>Current sprint</h1>
         <div class="sprint" id="sprint"></div>
-        <div class="status">
-            <p><strong>Start Date: </strong> <span id="startDate"></span></p>
-            <p><strong>Code Complete Date: </strong> <span id="codeCompleteDate"></span></p>
-            <p><strong>Code Freeze Date: </strong> <span id="codeFreezeDate"></span></p>
-            <p><strong>End Date: </strong> <span id="endDate"></span></p>
-            <p><strong>Status: </strong> <span class="is-development development">Development</span><span class="is-code-complete code-complete">Code Complete</span><span class="is-code-freeze code-freeze">Code Freeze</span></p>
-            <p>
-                <strong>Can I merge Pull Requests? </strong>
-                <span class="is-development">You can merge your PR to develop</span>
-                <span class="is-code-complete">You can only merge <code class="bug-fix">bug-fixes</code> to develop</span>
-                <span class="is-code-freeze">Only your lead can if it's a <code class="show-stopper">show-stopper</code></span>
-            </p>
+        <div class="row">
+            <div class="column">
+                <h2 class="center-align">Legend</h2>
+                <table class="center-align">
+                    <tr>
+                        <td><div class="legend development"></div></td>
+                        <td>
+                            Development<br/>
+                            <small class="i">You can merge your PR to develop</small>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><div class="legend code-complete"></div></td>
+                        <td>
+                            Code Complete<br/>
+                            <small class="i">You can only merge <code class="bug-fix">bug-fixes</code> to develop</small>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><div class="legend code-freeze"></div></td>
+                        <td>
+                            Code Freeze<br/>
+                            <small class="i">Only your lead can merge if it's a <code class="show-stopper">show-stopper</code></small>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="column status">
+                <p><strong>Start Date: </strong> <span id="startDate"></span></p>
+                <p><strong>Code Complete Date: </strong> <span id="codeCompleteDate"></span></p>
+                <p><strong>Code Freeze Date: </strong> <span id="codeFreezeDate"></span></p>
+                <p><strong>End Date: </strong> <span id="endDate"></span></p>
+                <p><strong>Status: </strong> <span class="is-development development">Development</span><span class="is-code-complete code-complete">Code Complete</span><span class="is-code-freeze code-freeze">Code Freeze</span></p>
+                <p>
+                    <strong>Can I merge Pull Requests? </strong>
+                    <span class="is-development">You can merge your PR to develop</span>
+                    <span class="is-code-complete">You can only merge <code class="bug-fix">bug-fixes</code> to develop</span>
+                    <span class="is-code-freeze">Only your lead can if it's a <code class="show-stopper">show-stopper</code></span>
+                </p>
+            </div>
         </div>
     </div>
-
-    <h2>Legend</h2>
-    <table>
-        <tr>
-            <td><div class="legend development"></div></td>
-            <td>
-                Development<br/>
-                <small class="i">You can merge your PR to develop</small>
-            </td>
-        </tr>
-        <tr>
-            <td><div class="legend code-complete"></div></td>
-            <td>
-                Code Complete<br/>
-                <small class="i">You can only merge <code class="bug-fix">bug-fixes</code> to develop</small>
-            </td>
-        </tr>
-        <tr>
-            <td><div class="legend code-freeze"></div></td>
-            <td>
-                Code Freeze<br/>
-                <small class="i">Only your lead can merge if it's a <code class="show-stopper">show-stopper</code></small>
-            </td>
-        </tr>
-    </table>
 
     <script src="js/jquery.min.js"></script>
     <script>

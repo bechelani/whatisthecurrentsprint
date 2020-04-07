@@ -9,7 +9,7 @@ h1 {
 }
 
 h2 {
-    margin-bottom:5px;
+    margin-bottom: 5px;
     font-size: 1.1em;
 }
 
@@ -18,6 +18,7 @@ small {
 }
 
 table {
+    margin-top: 10px;
     border-collapse: collapse;
 }
 
@@ -29,6 +30,18 @@ table, th, td {
 .container {
     text-align: center;
     margin: 5%;
+}
+
+.column {
+    float: left;
+    width: 50%;
+  }
+  
+/* Clear floats after the columns */
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
 }
 
 .i {
@@ -49,9 +62,7 @@ table, th, td {
 }
 
 .status {
-  margin: 0 auto;
   text-align: left;
-  width: 60%
 }
 
 .legend {
@@ -62,6 +73,10 @@ table, th, td {
     text-align: center;
     margin: 0 auto;
     color: #fff;
+}
+
+.center-align {
+    margin: 0 auto;
 }
 
 .development {
