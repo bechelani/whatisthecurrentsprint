@@ -40,10 +40,12 @@ table, th, td {
     height: 300px;
     border-radius: 50%;
     font-size: 92px;
-    color: #fff;
     line-height: 300px;
     text-align: center;
     margin: 60px auto;
+    padding: 2px;
+    font-style: normal;
+    font-weight: bold;
 }
 
 .status {
@@ -86,4 +88,25 @@ table, th, td {
     padding: 2px;
     font-style: normal;
     font-weight: bold;
+}
+
+.is-development { display: none; }
+.is-code-complete { display: none; }
+.is-code-freeze  { display: none; }
+
+.status-development .is-development { display: inline-block; }
+.status-code-complete .is-code-complete { display: inline-block; }
+.status-code-freeze .is-code-freeze { display: inline-block; }
+
+.status-development .sprint {
+  background: #228B22;
+  color: #fff;
+}
+.status-code-complete .sprint {
+  background: #FFD700;
+  color: #000;
+}
+.status-code-freeze .sprint {
+  background: #DC143C;
+  color: #fff;
 }

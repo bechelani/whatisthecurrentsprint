@@ -14,17 +14,22 @@
     <link href="css/main.css" rel="stylesheet" type="text/css">
 </head>
 
-<body>
+<body class="">
     <div class="container">
         <h1>Current sprint:</h1>
-        <div class="sprint code-freeze" id="sprint">
-            5.04
-        </div>
+        <div class="sprint" id="sprint"></div>
         <div class="status">
-            <p><strong>Start Date: </strong> <span id="startDate">March 16, 2020</span></p>
-            <p><strong>End Date: </strong> <span id="endDate">April 7, 2020</span></p>
-            <p><strong>Status: </strong> <span class="code-freeze">Code Freeze</span></p>
-            <p><strong>Can I merge Pull Requests? </strong> <span>Only your lead can if it's a <code class="show-stopper">show-stopper</code></span></p>
+            <p><strong>Start Date: </strong> <span id="startDate"></span></p>
+            <p><strong>Code Complete Date: </strong> <span id="codeCompleteDate"></span></p>
+            <p><strong>Code Freeze Date: </strong> <span id="codeFreezeDate"></span></p>
+            <p><strong>End Date: </strong> <span id="endDate"></span></p>
+            <p><strong>Status: </strong> <span class="is-development development">Development</span><span class="is-code-complete code-complete">Code Complete</span><span class="is-code-freeze code-freeze">Code Freeze</span></p>
+            <p>
+                <strong>Can I merge Pull Requests? </strong>
+                <span class="is-development">You can merge your PR to develop</span>
+                <span class="is-code-complete">You can only merge <code class="bug-fix">bug-fixes</code> to develop</span>
+                <span class="is-code-freeze">Only your lead can if it's a <code class="show-stopper">show-stopper</code></span>
+            </p>
         </div>
     </div>
 
@@ -53,13 +58,19 @@
         </tr>
     </table>
 
-    <!-- <script src="js/jquery.min.js"></script>
+    <script src="js/jquery.min.js"></script>
     <script>
         $( document ).ready(function() {
             jQuery.get('/sprint.json', function(data) {
-                alert(data);
+                $('#codeCompleteDate').text(data.codeCompleteDate);
+                $('#codeFreezeDate').text(data.codeFreezeDate);
+                $('#endDate').text(data.endDate);
+                $('#sprint').text(data.sprint);
+                $('#startDate').text(data.startDate);
+
+                $('body').addClass('status-' + data.status);
             });
         });
-    </script> -->
+    </script>
 </body>
 </html>
