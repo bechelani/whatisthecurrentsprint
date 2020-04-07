@@ -17,11 +17,34 @@
 
         h1 {
             font-size: 4em;
+            margin-top: 10px;
+        }
+
+        h2 {
+            margin-bottom:5px;
+            font-size: 1.1em;
+        }
+
+        small {
+            font-size: 10px;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+            padding: 5px;
         }
 
         .container {
             text-align: center;
             margin: 5%;
+        }
+
+        .i {
+            font-style: italic;
         }
 
         .sprint {
@@ -32,20 +55,43 @@
             color: #fff;
             line-height: 300px;
             text-align: center;
-            
+            margin: 60px auto;
+        }
+
+        .legend {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            line-height: 20px;
+            text-align: center;
             margin: 0 auto;
+            color: #fff;
         }
 
         .development {
             background: #228B22;
+            color: #fff;
+            padding: 2px;
+            font-style: normal;
+            font-weight: bold;
         }
 
+        .bug-fix,
         .code-complete {
             background: #FFD700;
+            color: #000;
+            padding: 2px;
+            font-style: normal;
+            font-weight: bold;
         }
 
+        .show-stopper,
         .code-freeze {
             background: #DC143C;
+            color: #fff;
+            padding: 2px;
+            font-style: normal;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -56,10 +102,37 @@
         <div class="sprint code-freeze">
             5.04
         </div>
-        <p><strong>Start Date: </strong> <span>March 16, 2020</span></p>
-        <p><strong>End Date: </strong> <span>April 7, 2020</span></p>
-        <p><strong>Status: </strong> <span>Code Freeze</span></p>
-        <p><strong>Can I merge Pull Requests? </strong> <span>Only show stoppers</span></p>
+        <div style="margin: 0 auto; text-align: left; width: 60%">
+            <p><strong>Start Date: </strong> <span>March 16, 2020</span></p>
+            <p><strong>End Date: </strong> <span>April 7, 2020</span></p>
+            <p><strong>Status: </strong> <span class="code-freeze">Code Freeze</span></p>
+            <p><strong>Can I merge Pull Requests? </strong> <span>Only your lead can if it's a <code class="show-stopper">show-stopper</code></span></p>
+        </div>
     </div>
+
+    <h2>Legend</h2>
+    <table>
+        <tr>
+            <td><div class="legend development"></div></td>
+            <td>
+                Development<br/>
+                <small class="i">You can merge your PR to develop</small>
+            </td>
+        </tr>
+        <tr>
+            <td><div class="legend code-complete"></div></td>
+            <td>
+                Code Complete<br/>
+                <small class="i">You can only merge <code class="bug-fix">bug-fixes</code> to develop</small>
+            </td>
+        </tr>
+        <tr>
+            <td><div class="legend code-freeze"></div></td>
+            <td>
+                Code Freeze<br/>
+                <small class="i">Only your lead can merge if it's a <code class="show-stopper">show-stopper</code></small>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>
