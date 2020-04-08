@@ -5,43 +5,10 @@ body {
 
 h1 {
     font-size: 4em;
-    margin-top: 10px;
 }
 
 h2 {
-    margin-bottom: 5px;
-    font-size: 1.1em;
-}
-
-small {
-    font-size: 10px;
-}
-
-table {
-    margin-top: 10px;
-    border-collapse: collapse;
-}
-
-table, th, td {
-    border: 1px solid #ccc;
-    padding: 5px;
-}
-
-.container {
-    text-align: center;
-    margin: 5%;
-}
-
-.column {
-    float: left;
-    width: 50%;
-  }
-  
-/* Clear floats after the columns */
-.row:after {
-    content: "";
-    display: table;
-    clear: both;
+    font-size: 2em;
 }
 
 .i {
@@ -53,7 +20,7 @@ table, th, td {
     height: 300px;
     border-radius: 50%;
     font-size: 92px;
-    line-height: 300px;
+    line-height: 260px;
     text-align: center;
     margin: 60px auto;
     padding: 2px;
