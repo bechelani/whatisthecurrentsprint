@@ -1,8 +1,8 @@
 {
-    "codeCompleteDate": "August 27, 2020",
-    "codeFreezeDate": "September 1, 2020",
-    "endDate": "September 8, 2020",
-    "sprint": "5.11",
-    "startDate": "August 18, 2020",
-    "status": "code-freeze"
+    "codeCompleteDate": "September 24, 2020",
+    "codeFreezeDate": "September 29, 2020",
+    "endDate": "October 5, 2020",
+    "sprint": "5.12",
+    "startDate": "September 9, 2020",
+    "status": "development"
 }
