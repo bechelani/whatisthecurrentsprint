@@ -1,17 +1,20 @@
 version: "3.8"
 
 services:
-  webapp:
+  web:
+    image: mbbacr.azurecr.io/whatisthecurrentsprint/web:${TAG:-latest}
     build:
       context: ..
       dockerfile: src/Web/Dockerfile
 
   admin:
+    image: mbbacr.azurecr.io/whatisthecurrentsprint/admin:${TAG:-latest}
     build:
       context: ..
       dockerfile: src/Admin/Dockerfile
 
   functionapp:
+    image: mbbacr.azurecr.io/whatisthecurrentsprint/functionapp:${TAG:-latest}
     build:
       context: ..
       dockerfile: src/FunctionApp/Dockerfile
