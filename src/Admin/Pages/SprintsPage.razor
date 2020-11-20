@@ -1,0 +1,58 @@
+@page "/sprints"
+
+@using WhatIsTheCurrentSprint.Core.Data
+@inject ISprintInfoService SprintInfoService
+
+<h1>Sprints</h1>
+
+<p></p>
+
+@if (sprint == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Sprint</th>
+                <th>Status</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Code Complete Date</th>
+                <th>Code Freeze Date</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@sprint.Sprint</td>
+                <td>@sprint.Status</td>
+                <td>@sprint.StartDate.ToString("D")</td>
+                <td>@sprint.EndDate.ToString("D")</td>
+                <td>@sprint.CodeCompleteDate.ToString("D")</td>
+                <td>@sprint.CodeFreezeDate.ToString("D")</td>
+                <td>
+                    <NavLink class="nav-link" href="sprints/current-sprint/edit">
+                        <span class="oi oi-pencil" aria-hidden="true"></span>
+                    </NavLink>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+}
+
+@code {
+    private SprintInfo sprint;
+
+    protected override async Task OnInitializedAsync()
+    {
+        sprint = await SprintInfoService.GetCurrentSprintInfoAsync();
+
+        if (sprint == null)
+        {
+            sprint = new SprintInfo();
+        }
+    }
+}

@@ -1,0 +1,85 @@
+﻿@page "/"
+
+@using WhatIsTheCurrentSprint.Core.Data
+@inject SprintInfoService SprintInfoService
+
+@if (sprintInfo == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="@((sprintInfo.Status == "development" ? "status-development" : (sprintInfo.Status == "code-complete" ? "status-code-complete" : (sprintInfo.Status == "code-freeze" ? "status-code-freeze" : ""))))">
+    <div class="row">
+        <div class="col">
+            <h1 class="text-center">Current sprint</h1>
+            <div class="sprint shadow p-3 mb-5" id="sprint">@sprintInfo.Sprint</div>
+        </div>
+    </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm col-lg status">
+            <h2>Status</h2>
+            <p><strong>Start Date: </strong> @sprintInfo.StartDate.ToString("D")</p>
+            <p><strong>Feature Complete Date: </strong> @sprintInfo.CodeCompleteDate.ToString("D")</p>
+            <p><strong>Code Freeze Date: </strong> @sprintInfo.CodeFreezeDate.ToString("D")</p>
+            <p><strong>End Date: </strong> @sprintInfo.EndDate.ToString("D")</p>
+            <p><strong>Status: </strong>
+            @if (sprintInfo.Status == "development") {
+                <span class="is-development development">Development</span>
+            } else if (sprintInfo.Status == "code-complete") {
+                <span class="is-code-complete code-complete">Feature Complete</span>
+            } else if (sprintInfo.Status == "code-freeze") {
+                <span class="is-code-freeze code-freeze">Code Freeze</span>
+            }
+            </p>
+            <p>
+                <strong>Can I merge Pull Requests? </strong>
+                @if (sprintInfo.Status == "development") {
+                    <span class="is-development">You can merge your PR to develop</span>
+                } else if (sprintInfo.Status == "code-complete") {
+                    <span class="is-code-complete">You can only merge <code class="bug-fix">bug-fixes</code> to develop</span>
+                } else if (sprintInfo.Status == "code-freeze") {
+                    <span class="is-code-freeze">Only your lead can if it's a <code class="show-stopper">show-stopper</code></span>
+                }
+            </p>
+        </div>
+
+        <div class="col-sm col-lg-4">
+            <h2>Legend</h2>
+            <table class="table table-bordered">
+                <tr>
+                    <td><div class="legend development"></div></td>
+                    <td>
+                        Development<br/>
+                        <small class="i">You can merge your PR to develop</small>
+                    </td>
+                </tr>
+                <tr>
+                    <td><div class="legend code-complete"></div></td>
+                    <td>
+                        Feature Complete<br/>
+                        <small class="i">You can only merge <code class="bug-fix">bug-fixes</code> to develop</small>
+                    </td>
+                </tr>
+                <tr>
+                    <td><div class="legend code-freeze"></div></td>
+                    <td>
+                        Code Freeze<br/>
+                        <small class="i">Only your lead can merge if it's a <code class="show-stopper">show-stopper</code></small>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+}
+
+@code {
+    private SprintInfo sprintInfo;
+
+    protected override async Task OnInitializedAsync()
+    {
+        sprintInfo = await SprintInfoService.GetCurrentSprintInfoAsync();
+    }
+}

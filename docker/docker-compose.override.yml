@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  webapp:
+    ports:
+      - "8080:80"
+  admin:
+    ports:
+      - "8081:80"
+  functionapp:
+    ports:
+      - "8082:80"

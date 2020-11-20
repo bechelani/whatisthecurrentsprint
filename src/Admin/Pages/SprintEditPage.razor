@@ -1,0 +1,68 @@
+@page "/sprints/current-sprint/edit"
+
+@using WhatIsTheCurrentSprint.Core.Data
+@inject ISprintInfoService SprintInfoService
+
+<h1>Sprints</h1>
+
+<h2>@sprint.Sprint</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <EditForm Model="@sprint" OnValidSubmit=@ValidFormSubmitted>
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group">
+                <label for="Name">Name</label>
+                <InputText @bind-Value="sprint.Sprint" class="form-control" id="Name" />
+            </div>
+
+            <div class="form-group">
+                <label for="Status">Status</label>
+                <InputText @bind-Value="sprint.Status" class="form-control" id="Status" />
+            </div>
+
+            <div class="form-group">
+                <label for="StartDate">Start Date</label>
+                <RadzenDatePicker @bind-Value="sprint.StartDate" DateFormat="d" id="StartDate" />
+            </div>
+            
+            <div class="form-group">
+                <label for="EndDate">End Date</label>
+                <RadzenDatePicker @bind-Value="sprint.EndDate" DateFormat="d" id="EndDate" />
+            </div>
+            
+            <div class="form-group">
+                <label for="CodeCompleteDate">Code Complete Date</label>
+                <RadzenDatePicker @bind-Value="sprint.CodeCompleteDate" id="CodeCompleteDate" DateFormat="d" />
+            </div>
+            
+            <div class="form-group">
+                <label for="CodeFreezeDate">Code Freeze Date</label>
+                <RadzenDatePicker @bind-Value="sprint.CodeFreezeDate" id="CodeFreezeDate" DateFormat="d" />
+            </div>
+
+            <input type="submit" class="btn btn-primary" value="Save"/>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private SprintInfo sprint = new SprintInfo();
+
+    protected override async Task OnInitializedAsync()
+    {
+        sprint = await SprintInfoService.GetCurrentSprintInfoAsync();
+
+        if (sprint == null)
+        {
+            sprint = new SprintInfo();
+        }
+    }
+
+    async Task ValidFormSubmitted(EditContext editContext)
+    {
+        await SprintInfoService.UpdateCurrentSprintInfoAsync(sprint);
+    }
+}

@@ -1,0 +1,52 @@
+@page "/triggers"
+
+@using WhatIsTheCurrentSprint.Core.Data
+@inject ITriggerService TriggerService
+
+<h1>Triggers</h1>
+
+<p></p>
+
+@if (triggers == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <NavLink class="nav-link" href="triggers/add">
+        <span class="oi oi-plus" aria-hidden="true"></span> Add New
+    </NavLink>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Enabled</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var trigger in triggers)
+            {
+            <tr>
+                <td>@trigger.Name</td>
+                <td>@trigger.Enabled</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Trigger> triggers;
+
+    protected override async Task OnInitializedAsync()
+    {
+        triggers = await TriggerService.GetAllTriggersAsync();
+
+        if (triggers == null)
+        {
+            triggers = new List<Trigger>();
+        }
+    }
+}

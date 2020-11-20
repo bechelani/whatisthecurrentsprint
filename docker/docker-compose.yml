@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  webapp:
+    build:
+      context: ..
+      dockerfile: src/Web/Dockerfile
+
+  admin:
+    build:
+      context: ..
+      dockerfile: src/Admin/Dockerfile
+
+  functionapp:
+    build:
+      context: ..
+      dockerfile: src/FunctionApp/Dockerfile
