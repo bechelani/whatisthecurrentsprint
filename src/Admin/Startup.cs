@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Azure.Cosmos;
@@ -43,6 +45,12 @@ namespace WhatIsTheCurrentSprint.Admin
                 // options.Filters.Add(new AuthorizeFilter(policy));
             });
 
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders = ForwardedHeaders.All;
+                options.AllowedHosts = Configuration.GetValue<string>("AllowedHosts")?.Split(';').ToList<string>();
+            });
+
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddHealthChecks();
@@ -66,6 +74,8 @@ namespace WhatIsTheCurrentSprint.Admin
                 app.UseHsts();
             }
 
+            app.UseForwardedHeaders();
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -73,6 +83,20 @@ namespace WhatIsTheCurrentSprint.Admin
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            // if you've configured it at /admin or /whatever, set that pathbase so ~ will generate correctly
+            Uri rootUri = new Uri(Configuration.GetValue<string>("SiteConfiguration:Root"));
+            string path = rootUri.AbsolutePath;
+
+            // Deal with path base and proxies that change the request path
+            if (path != "/")
+            {
+                app.Use((context, next) =>
+                {
+                    context.Request.PathBase = new PathString(path);
+                    return next.Invoke();
+                });
+            }
 
             app.UseEndpoints(endpoints =>
             {
@@ -84,7 +108,7 @@ namespace WhatIsTheCurrentSprint.Admin
         }
 
         /// <summary>
-        /// Creates a Cosmos DB database and a container with the specified partition key. 
+        /// Creates a Cosmos DB database and a container with the specified partition key.
         /// </summary>
         /// <returns></returns>
         private static async Task InitializeCosmosClientInstanceAsync(IServiceCollection services, IConfigurationSection configurationSection)
