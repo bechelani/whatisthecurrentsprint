@@ -34,15 +34,15 @@ namespace WhatIsTheCurrentSprint.Admin
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            // services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
-            //     .AddAzureAD(options => Configuration.Bind("AzureAd", options));
+            services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
+                .AddAzureAD(options => Configuration.Bind("AzureAd", options));
 
             services.AddControllersWithViews(options =>
             {
-                // var policy = new AuthorizationPolicyBuilder()
-                //     .RequireAuthenticatedUser()
-                //     .Build();
-                // options.Filters.Add(new AuthorizeFilter(policy));
+                var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+                options.Filters.Add(new AuthorizeFilter(policy));
             });
 
             services.Configure<ForwardedHeadersOptions>(options =>
