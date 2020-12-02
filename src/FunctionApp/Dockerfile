@@ -7,16 +7,16 @@ ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /src
 
-COPY ./src/FunctionApp/WhatIsTheCurrentSprint.FunctionApp.csproj ./FunctionApp/WhatIsTheCurrentSprint.FunctionApp.csproj
+COPY src/FunctionApp/WhatIsTheCurrentSprint.FunctionApp.csproj FunctionApp/WhatIsTheCurrentSprint.FunctionApp.csproj
 
-RUN dotnet restore "./FunctionApp/WhatIsTheCurrentSprint.FunctionApp.csproj"
+RUN dotnet restore "FunctionApp/WhatIsTheCurrentSprint.FunctionApp.csproj"
 
-COPY ./src/FunctionApp/ ./FunctionApp/
+COPY src/FunctionApp/ FunctionApp/
 
-RUN dotnet build "./FunctionApp/WhatIsTheCurrentSprint.FunctionApp.csproj" -c Release -o /app/build
+RUN dotnet build "FunctionApp/WhatIsTheCurrentSprint.FunctionApp.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "./FunctionApp/WhatIsTheCurrentSprint.FunctionApp.csproj" -c Release -o /app/publish
+RUN dotnet publish "FunctionApp/WhatIsTheCurrentSprint.FunctionApp.csproj" -c Release -o /app/publish
 
 FROM base as final
 WORKDIR /home/site/wwwroot

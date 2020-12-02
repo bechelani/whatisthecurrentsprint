@@ -6,18 +6,18 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
 
-COPY ./src/Core/WhatIsTheCurrentSprint.Core.csproj ./Core/WhatIsTheCurrentSprint.Core.csproj
-COPY ./src/Admin/WhatIsTheCurrentSprint.Admin.csproj ./Admin/WhatIsTheCurrentSprint.Admin.csproj
+COPY src/Core/WhatIsTheCurrentSprint.Core.csproj Core/WhatIsTheCurrentSprint.Core.csproj
+COPY src/Admin/WhatIsTheCurrentSprint.Admin.csproj Admin/WhatIsTheCurrentSprint.Admin.csproj
 
-RUN dotnet restore "./Admin/WhatIsTheCurrentSprint.Admin.csproj"
+RUN dotnet restore "Admin/WhatIsTheCurrentSprint.Admin.csproj"
 
-COPY ./src/Core/ ./Core/
-COPY ./src/Admin/ ./Admin/
+COPY src/Core/ Core/
+COPY src/Admin/ Admin/
 
-RUN dotnet build "./Admin/WhatIsTheCurrentSprint.Admin.csproj" -c Release -o /app/build
+RUN dotnet build "Admin/WhatIsTheCurrentSprint.Admin.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "./Admin/WhatIsTheCurrentSprint.Admin.csproj" -c Release -o /app/publish
+RUN dotnet publish "Admin/WhatIsTheCurrentSprint.Admin.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
