@@ -1,0 +1,23 @@
+@page "/host"
+
+@using Microsoft.Extensions.Configuration;
+@using System.Collections
+
+@inject IConfiguration config
+
+<h2>Injected properties direct from configuration file:</h2>
+<ol>
+    <li>CosmosDb.Account = @config["CosmosDb:Account"]</li>
+    <li>AzureAd:Domain = @config["AzureAd:Domain"]</li>
+    <li>AzureAd:TenantId = @config["AzureAd:TenantId"]</li>
+    <li>AzureAd:ClientId = @config["AzureAd:ClientId"]</li>
+</ol>
+
+<h2>Environment variables</h2>
+
+<ol>
+@foreach (DictionaryEntry ev in Environment.GetEnvironmentVariables())
+{
+    <li>@ev.Key = @ev.Value</li>
+}
+</ol>
