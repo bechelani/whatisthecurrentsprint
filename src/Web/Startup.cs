@@ -12,7 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using WhatIsTheCurrentSprint.Core.Data;
-using WhatIsTheCurrentSprint.Web.Data;
 
 namespace WhatIsTheCurrentSprint.Web
 {
@@ -39,7 +38,7 @@ namespace WhatIsTheCurrentSprint.Web
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             logger.LogError("This is not an error. Configure started.");
-            
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -65,7 +64,7 @@ namespace WhatIsTheCurrentSprint.Web
         }
 
         /// <summary>
-        /// Creates a Cosmos DB database and a container with the specified partition key. 
+        /// Creates a Cosmos DB database and a container with the specified partition key.
         /// </summary>
         /// <returns></returns>
         private static async Task<SprintInfoService> InitializeCosmosClientInstanceAsync(IConfigurationSection configurationSection)
