@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace CloudNinja.GitHub.Functions
+namespace WhatIsTheCurrentSprint.FunctinoApp.Functions
 {
     public static class HttpTrigger
     {
