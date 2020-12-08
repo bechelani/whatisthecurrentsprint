@@ -1,13 +1,10 @@
 using System;
 using Newtonsoft.Json;
-using WhatIsTheCurrentSprint.FunctinoApp.Helpers;
 
 namespace WhatIsTheCurrentSprint.FunctinoApp.Models
 {
-    public class WebhookPullRequestCheckRun : WebhookPullRequestBase
+    public class WebhookCheckRun
     {
-        public override string Type => Constants.CHECK_RUN_TYPE;
-
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 

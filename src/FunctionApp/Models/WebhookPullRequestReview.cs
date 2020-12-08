@@ -1,13 +1,10 @@
 using System;
 using Newtonsoft.Json;
-using WhatIsTheCurrentSprint.FunctinoApp.Helpers;
 
 namespace WhatIsTheCurrentSprint.FunctinoApp.Models
 {
-    public class WebhookPullRequestReview : WebhookPullRequestBase
+    public class WebhookPullRequestReview
     {
-        public override string Type => Constants.PULL_REQUEST_REVIEW_TYPE;
-
         [JsonProperty(PropertyName = "commit_id")]
         public string CommitId { get; set; }
 

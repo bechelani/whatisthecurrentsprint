@@ -1,12 +1,12 @@
 using System;
 using Newtonsoft.Json;
-using WhatIsTheCurrentSprint.FunctinoApp.Helpers;
 
 namespace WhatIsTheCurrentSprint.FunctinoApp.Models
 {
-    public class WebhookPullRequestItem : WebhookPullRequestBase
+    public class WebhookPullRequest
     {
-        public override string Type => Constants.PULL_REQUEST_TYPE;
+        [JsonProperty(PropertyName = "number")]
+        public int Number { get; set; }
 
         [JsonProperty(PropertyName = "title")]
         public string Title { get; set; }

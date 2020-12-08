@@ -38,25 +38,25 @@ namespace WhatIsTheCurrentSprint.FunctinoApp.Functions
             log.LogInformation($"pull-request function is processing a request.");
 
             log.LogInformation("Deserializing queue message.");
-            var messageQueueItem = JsonConvert.DeserializeObject<PullRequestQueueMessage>(myQueueItem);
+            var messageQueueItem = JsonConvert.DeserializeObject<WebhookItem>(myQueueItem);
 
             log.LogInformation($"pull-request function is processing a {messageQueueItem.Type} message queue item type.");
 
             if (messageQueueItem.Type == Constants.PULL_REQUEST_TYPE)
             {
                 log.LogInformation("Getting webhook item from cosmos db.");
-                var webhookItem = await _webhooksContainer.ReadItemAsync<WebhookPullRequestItem>(messageQueueItem.Id, new PartitionKey(messageQueueItem.PartitionId));
+
 
             }
             else if (messageQueueItem.Type == Constants.CHECK_RUN_TYPE)
             {
                 log.LogInformation("Getting webhook item from cosmos db.");
-                var webhookItem = await _webhooksContainer.ReadItemAsync<WebhookPullRequestCheckRun>(messageQueueItem.Id, new PartitionKey(messageQueueItem.PartitionId));
+
             }
             else if (messageQueueItem.Type == Constants.PULL_REQUEST_REVIEW_TYPE)
             {
                 log.LogInformation("Getting webhook item from cosmos db.");
-                var webhookItem = await _webhooksContainer.ReadItemAsync<WebhookPullRequestReview>(messageQueueItem.Id, new PartitionKey(messageQueueItem.PartitionId));
+
             }
 
             log.LogInformation("pull-request function finished processing request.");

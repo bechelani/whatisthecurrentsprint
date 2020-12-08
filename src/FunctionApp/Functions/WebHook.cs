@@ -24,8 +24,8 @@ namespace WhatIsTheCurrentSprint.FunctinoApp.Functions
             [CosmosDB(
                 databaseName: "GitHub",
                 collectionName: "Webhooks",
-                ConnectionStringSetting = "CosmosDBConnection")] IAsyncCollector<dynamic> cosmosDbOut,
-            [Queue("pullrequests"), StorageAccount("AzureWebJobsStorage")] IAsyncCollector<PullRequestQueueMessage> queueOut,
+                ConnectionStringSetting = "CosmosDBConnection")] IAsyncCollector<WebhookItem> cosmosDbOut,
+            [Queue("pullrequests"), StorageAccount("AzureWebJobsStorage")] IAsyncCollector<WebhookItem> queueOut,
             ILogger log)
         {
             log.LogInformation("webhook function is processing a request.");
@@ -64,9 +64,9 @@ namespace WhatIsTheCurrentSprint.FunctinoApp.Functions
                 {
                     log.LogDebug("building model");
 
-                    var model = CreatePullRequestModel(payload, log);
+                    var model = CreateWebhookItemModel(payload, log);
                     await cosmosDbOut.AddAsync(model);
-                    await queueOut.AddAsync(new PullRequestQueueMessage(model.Id, model.PartitionId, model.Type));
+                    await queueOut.AddAsync(model);
                 }
                 else
                 {
@@ -82,9 +82,9 @@ namespace WhatIsTheCurrentSprint.FunctinoApp.Functions
                 {
                     log.LogDebug("building model");
 
-                    var model = CreatePullRequestReviewModel(payload, log);
+                    var model = CreateWebhookItemModel(payload, log);
                     await cosmosDbOut.AddAsync(model);
-                    await queueOut.AddAsync(new PullRequestQueueMessage(model.Id, model.PartitionId, model.Type));
+                    await queueOut.AddAsync(model);
                 }
                 else
                 {
@@ -100,11 +100,11 @@ namespace WhatIsTheCurrentSprint.FunctinoApp.Functions
                 {
                     log.LogDebug("building model");
 
-                    var models = CreateCheckRunModel(payload, log);
+                    var models = CreateWebhookItemModel(payload, log);
                     foreach (var model in models)
                     {
                         await cosmosDbOut.AddAsync(model);
-                        await queueOut.AddAsync(new PullRequestQueueMessage(model.Id, model.PartitionId, model.Type));
+                        await queueOut.AddAsync(model);
                     }
                 }
                 else
@@ -133,13 +133,9 @@ namespace WhatIsTheCurrentSprint.FunctinoApp.Functions
         {
             log.LogDebug("DeserializePullRequestPayloadAsync");
 
-            var serializer = new SimpleJsonSerializer();
-
-            log.LogDebug($"json:{json}");
-
             try
             {
-
+                var serializer = new SimpleJsonSerializer();
                 var payload = serializer.Deserialize<PullRequestEventPayload>(json);
                 return payload;
             }
@@ -155,13 +151,9 @@ namespace WhatIsTheCurrentSprint.FunctinoApp.Functions
         {
             log.LogDebug("DeserializePullRequestReviewPayloadAsync");
 
-            var serializer = new SimpleJsonSerializer();
-
-            log.LogDebug($"json:{json}");
-
             try
             {
-
+                var serializer = new SimpleJsonSerializer();
                 var payload = serializer.Deserialize<PullRequestReviewEventPayload>(json);
                 return payload;
             }
@@ -173,18 +165,14 @@ namespace WhatIsTheCurrentSprint.FunctinoApp.Functions
             return null;
         }
 
-        private static StatusEventPayload DeserializeStatusPayloadAsync(string json, ILogger log)
+        private static CheckRunEventPayload DeserializeCheckRunPayloadAsync(string json, ILogger log)
         {
-            log.LogDebug("DeserializeStatusPayloadAsync");
-
-            var serializer = new SimpleJsonSerializer();
-
-            log.LogDebug($"json:{json}");
+            log.LogDebug("DeserializeCheckRunPayloadAsync");
 
             try
             {
-
-                var payload = serializer.Deserialize<StatusEventPayload>(json);
+                var serializer = new SimpleJsonSerializer();
+                var payload = serializer.Deserialize<CheckRunEventPayload>(json);
                 return payload;
             }
             catch (Exception ex)
@@ -216,127 +204,175 @@ namespace WhatIsTheCurrentSprint.FunctinoApp.Functions
             return null;
         }
 
-        private static CheckRunEventPayload DeserializeCheckRunPayloadAsync(string json, ILogger log)
+        private static Models.WebhookItem CreateWebhookItemModel(PullRequestEventPayload payload, ILogger log)
         {
-            log.LogDebug("DeserializeCheckRunPayloadAsync");
-
-            var serializer = new SimpleJsonSerializer();
-
-            log.LogDebug($"json:{json}");
-
-            try
-            {
-                var payload = serializer.Deserialize<CheckRunEventPayload>(json);
-                return payload;
-            }
-            catch (Exception ex)
-            {
-                log.LogError(ex, ex.Message);
-            }
-
-            return null;
-        }
-
-        private static Models.WebhookPullRequestItem CreatePullRequestModel(PullRequestEventPayload payload, ILogger log)
-        {
-            log.LogDebug("CreatePullRequestModel");
+            log.LogDebug("CreateWebhookItemModel: PullRequestEventPayload");
 
             if (payload.PullRequest == null)
             {
                 return null;
             }
 
-            var model = new Models.WebhookPullRequestItem
+            var model = new Models.WebhookItem
             {
                 Id = Guid.NewGuid().ToString(),
                 PartitionId = $"{payload.Repository?.Name}_{payload.Number}",
-                Repository = payload.Repository?.Name,
-                Number = payload.Number,
                 Action = payload.Action,
-                Title = payload.PullRequest.Title,
-                Milestone = payload.PullRequest.Milestone?.Description,
-                Labels = payload.PullRequest.Labels.Select(l => l.Name).ToArray(),
-                Assignees = payload.PullRequest.Assignees.Select(a => a.Login).ToArray(),
-                RequestedReviewers = payload.PullRequest.RequestedReviewers.Select(r => r.Login).ToArray(),
-                CreatedAt = payload.PullRequest.CreatedAt,
-                UpdatedAt = payload.PullRequest.UpdatedAt,
-                ClosedAt = payload.PullRequest.ClosedAt,
-                MergedAt = payload.PullRequest.MergedAt,
-                CreatedBy = payload.PullRequest.User?.Login,
-                Draft = payload.PullRequest.Draft,
-                Merged = payload.PullRequest.Merged,
-                Mergable = payload.PullRequest.Mergeable,
-                MergeableState = payload.PullRequest.MergeableState?.StringValue,
-                MergedBy = payload.PullRequest.MergedBy?.Login,
-                Base = new Models.GitRef { Ref = payload.PullRequest.Base.Ref, Sha = payload.PullRequest.Base.Sha },
-                Head = new Models.GitRef { Ref = payload.PullRequest.Head.Ref, Sha = payload.PullRequest.Head.Sha },
-                Url = payload.PullRequest.HtmlUrl,
-                State = payload.PullRequest.State.StringValue,
-                Body = payload.PullRequest.Body
+                Type = Constants.PULL_REQUEST_TYPE,
+                Repository = CreateWebhookRepositoryModel(payload.Repository, log),
+                PullRequest = CreateWebhookPullRequestModel(payload.PullRequest, log)
             };
 
             return model;
         }
 
-        private static Models.WebhookPullRequestReview CreatePullRequestReviewModel(PullRequestReviewEventPayload payload, ILogger log)
+        private static Models.WebhookItem CreateWebhookItemModel(PullRequestReviewEventPayload payload, ILogger log)
         {
-            log.LogDebug("CreatePullRequestReviewModel");
+            log.LogDebug("CreateWebhookItemModel: PullRequestReviewEventPayload");
 
-            if (payload.Review == null || payload.PullRequest == null)
+            if (payload.PullRequest == null || payload.Review == null)
             {
                 return null;
             }
 
-            var model = new Models.WebhookPullRequestReview
+            var model = new Models.WebhookItem
             {
                 Id = Guid.NewGuid().ToString(),
                 PartitionId = $"{payload.Repository?.Name}_{payload.PullRequest.Number}",
-                Repository = payload.Repository?.Name,
-                Number = payload.PullRequest.Number,
                 Action = payload.Action,
-                CommitId = payload.Review.CommitId,
-                SubmittedAt = payload.Review.SubmittedAt,
-                SubmittedBy = payload.Review.User.Login,
-                Url = payload.PullRequest.HtmlUrl,
-                State = payload.PullRequest.State.StringValue,
-                Body = payload.PullRequest.Body
+                Type = Constants.PULL_REQUEST_REVIEW_TYPE,
+                Repository = CreateWebhookRepositoryModel(payload.Repository, log),
+                PullRequest = CreateWebhookPullRequestModel(payload.PullRequest, log),
+                Review = CreateWebhookPullRequestReviewModel(payload.Review, log)
             };
 
             return model;
         }
 
-        private static List<Models.WebhookPullRequestCheckRun> CreateCheckRunModel(CheckRunEventPayload payload, ILogger log)
+        private static List<Models.WebhookItem> CreateWebhookItemModel(CheckRunEventPayload payload, ILogger log)
         {
-            log.LogDebug("CreateCheckRunModel");
+            log.LogDebug("CreateWebhookItemModel: CheckRunEventPayload");
 
             if (payload.CheckRun == null)
             {
                 return null;
             }
 
-            var models = new List<Models.WebhookPullRequestCheckRun>();
+            var models = new List<Models.WebhookItem>();
 
-            foreach (var pr in payload.CheckRun.PullRequests)
+            foreach (var pullRequest in payload.CheckRun.PullRequests)
             {
-                var checkRun = new Models.WebhookPullRequestCheckRun
+                var model = new Models.WebhookItem
                 {
                     Id = Guid.NewGuid().ToString(),
-                    PartitionId = $"{payload.Repository?.Name}_{pr.Number}",
-                    Repository = payload.Repository?.Name,
-                    Number = pr.Number,
+                    PartitionId = $"{payload.Repository?.Name}_{pullRequest.Number}",
                     Action = payload.Action,
-                    Name = payload.CheckRun.Name,
-                    StartedAt = payload.CheckRun.StartedAt,
-                    CompletedAt = payload.CheckRun.CompletedAt,
-                    Status = payload.CheckRun.Status.StringValue,
-                    Conclusion = payload.CheckRun.Conclusion?.StringValue,
-                    Url = payload.CheckRun.HtmlUrl
+                    Type = Constants.CHECK_RUN_TYPE,
+                    Repository = CreateWebhookRepositoryModel(payload.Repository, log),
+                    PullRequest = CreateWebhookPullRequestModel(pullRequest, log),
+                    CheckRun = CreateWebhookCheckRunModel(payload.CheckRun, log)
                 };
 
-                models.Add(checkRun);
+                models.Add(model);
             }
 
             return models;
+        }
+
+        private static Models.WebhookRepository CreateWebhookRepositoryModel(Repository repository, ILogger log)
+        {
+            log.LogDebug("CreateWebhookRepositoryModel");
+
+            if (repository== null)
+            {
+                return null;
+            }
+
+            var model = new Models.WebhookRepository
+            {
+                Name = repository.Name,
+                Url = repository.HtmlUrl
+            };
+
+            return model;
+        }
+
+        private static Models.WebhookPullRequest CreateWebhookPullRequestModel(PullRequest pullRequest, ILogger log)
+        {
+            log.LogDebug("CreateWebhookPullRequestModel");
+
+            if (pullRequest== null)
+            {
+                return null;
+            }
+
+            var model = new Models.WebhookPullRequest
+            {
+                Title = pullRequest.Title,
+                Milestone = pullRequest.Milestone?.Description,
+                Labels = pullRequest.Labels.Select(l => l.Name).ToArray(),
+                Assignees = pullRequest.Assignees.Select(a => a.Login).ToArray(),
+                RequestedReviewers = pullRequest.RequestedReviewers.Select(r => r.Login).ToArray(),
+                CreatedAt = pullRequest.CreatedAt,
+                UpdatedAt = pullRequest.UpdatedAt,
+                ClosedAt = pullRequest.ClosedAt,
+                MergedAt = pullRequest.MergedAt,
+                CreatedBy = pullRequest.User?.Login,
+                Draft = pullRequest.Draft,
+                Merged = pullRequest.Merged,
+                Mergable = pullRequest.Mergeable,
+                MergeableState = pullRequest.MergeableState?.StringValue,
+                MergedBy = pullRequest.MergedBy?.Login,
+                Number = pullRequest.Number,
+                Base = new Models.GitRef { Ref = pullRequest.Base.Ref, Sha = pullRequest.Base.Sha },
+                Head = new Models.GitRef { Ref = pullRequest.Head.Ref, Sha = pullRequest.Head.Sha },
+                Url = pullRequest.HtmlUrl,
+                State = pullRequest.State.StringValue,
+                Body = pullRequest.Body
+            };
+
+            return model;
+        }
+
+        private static Models.WebhookPullRequestReview CreateWebhookPullRequestReviewModel(PullRequestReview pullRequestReview, ILogger log)
+        {
+            log.LogDebug("CreateWebhookPullRequestReviewModel");
+
+            if (pullRequestReview== null)
+            {
+                return null;
+            }
+
+            var model = new Models.WebhookPullRequestReview
+            {
+                Url = pullRequestReview.HtmlUrl,
+                State = pullRequestReview.State.StringValue,
+                Body = pullRequestReview.Body
+            };
+
+            return model;
+        }
+
+        private static Models.WebhookCheckRun CreateWebhookCheckRunModel(CheckRun checkRun, ILogger log)
+        {
+            log.LogDebug("CreateWebhookCheckRunModel");
+
+            if (checkRun== null)
+            {
+                return null;
+            }
+
+            var model = new Models.WebhookCheckRun
+            {
+                Name = checkRun.Name,
+                StartedAt = checkRun.StartedAt,
+                CompletedAt = checkRun.CompletedAt,
+                Status = checkRun.Status.StringValue,
+                Conclusion = checkRun.Conclusion?.StringValue,
+                Url = checkRun.HtmlUrl
+            };
+
+            return model;
         }
 
         private static bool CalculateSignature(string body, string secret)
