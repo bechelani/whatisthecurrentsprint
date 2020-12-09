@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -8,11 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Octokit;
 using Octokit.Internal;
-using System.Linq;
-using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
 using WhatIsTheCurrentSprint.FunctinoApp.Helpers;
-using WhatIsTheCurrentSprint.FunctinoApp.Models;
 
 namespace WhatIsTheCurrentSprint.FunctinoApp.Functions
 {
@@ -24,8 +22,8 @@ namespace WhatIsTheCurrentSprint.FunctinoApp.Functions
             [CosmosDB(
                 databaseName: "GitHub",
                 collectionName: "Webhooks",
-                ConnectionStringSetting = "CosmosDBConnection")] IAsyncCollector<WebhookItem> cosmosDbOut,
-            [Queue("pullrequests"), StorageAccount("AzureWebJobsStorage")] IAsyncCollector<WebhookItem> queueOut,
+                ConnectionStringSetting = "CosmosDBConnection")] IAsyncCollector<Models.WebhookItem> cosmosDbOut,
+            [Queue("pullrequests"), StorageAccount("AzureWebJobsStorage")] IAsyncCollector<Models.WebhookItem> queueOut,
             ILogger log)
         {
             log.LogInformation("webhook function is processing a request.");

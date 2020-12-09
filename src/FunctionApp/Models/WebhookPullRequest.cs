@@ -11,8 +11,14 @@ namespace WhatIsTheCurrentSprint.FunctinoApp.Models
         [JsonProperty(PropertyName = "number")]
         public int Number { get; set; }
 
+        [JsonProperty(PropertyName = "state")]
+        public string State { get; set; }
+
         [JsonProperty(PropertyName = "title")]
         public string Title { get; set; }
+
+        [JsonProperty(PropertyName = "body")]
+        public string Body { get; set; }
 
         [JsonProperty(PropertyName = "milestone")]
         public string Milestone { get; set; }
@@ -65,10 +71,51 @@ namespace WhatIsTheCurrentSprint.FunctinoApp.Models
         [JsonProperty(PropertyName = "url")]
         public string Url { get; set; }
 
-        [JsonProperty(PropertyName = "state")]
-        public string State { get; set; }
+        public WebhookPullRequest()
+        {
 
-        [JsonProperty(PropertyName = "body")]
-        public string Body { get; set; }
+        }
+
+        public WebhookPullRequest(WebhookPullRequest source)
+        {
+            Id = source.Id;
+            Number = source.Number;
+            State = source.State;
+            Title = source.Title;
+            Body = source.Body;
+            Milestone = source.Milestone;
+            Labels = source.Labels;
+            Assignees = source.Assignees;
+            RequestedReviewers = source.RequestedReviewers;
+            CreatedAt = source.CreatedAt;
+            UpdatedAt = source.UpdatedAt;
+            ClosedAt = source.ClosedAt;
+            MergedAt = source.MergedAt;
+            CreatedBy = source.CreatedBy;
+            Draft = source.Draft;
+            Merged = source.Merged;
+            Mergable = source.Mergable;
+            MergeableState = source.MergeableState;
+            MergedBy = source.MergedBy;
+            Url = source.Url;
+
+            if (source.Base != null)
+            {
+                Base = new GitRef
+                {
+                    Ref = source.Base.Ref,
+                    Sha = source.Base.Sha
+                };
+            }
+
+            if (source.Head != null)
+            {
+                Head = new GitRef
+                {
+                    Ref = source.Head.Ref,
+                    Sha = source.Head.Sha
+                };
+            }
+        }
     }
 }

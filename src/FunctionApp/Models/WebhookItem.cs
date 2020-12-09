@@ -4,7 +4,7 @@ namespace WhatIsTheCurrentSprint.FunctinoApp.Models
 {
     public class WebhookItem
     {
-        [JsonProperty("id")]
+        [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
 
         [JsonProperty(PropertyName = "partition_id")]
