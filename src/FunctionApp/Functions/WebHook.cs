@@ -308,13 +308,15 @@ namespace WhatIsTheCurrentSprint.FunctinoApp.Functions
 
             var model = new Models.WebhookPullRequest
             {
+                Id = pullRequest.Id,
+                Number = pullRequest.Number,
                 Title = pullRequest.Title,
                 Milestone = pullRequest.Milestone?.Description,
-                Labels = pullRequest.Labels.Select(l => l.Name).ToArray(),
-                Assignees = pullRequest.Assignees.Select(a => a.Login).ToArray(),
-                RequestedReviewers = pullRequest.RequestedReviewers.Select(r => r.Login).ToArray(),
-                CreatedAt = pullRequest.CreatedAt,
-                UpdatedAt = pullRequest.UpdatedAt,
+                Labels = pullRequest.Labels?.Select(l => l.Name).ToArray(),
+                Assignees = pullRequest.Assignees?.Select(a => a.Login).ToArray(),
+                RequestedReviewers = pullRequest.RequestedReviewers?.Select(r => r.Login).ToArray(),
+                CreatedAt = pullRequest.CreatedAt == DateTimeOffset.MinValue ? pullRequest.CreatedAt : (DateTimeOffset?)null,
+                UpdatedAt = pullRequest.UpdatedAt == DateTimeOffset.MinValue ? pullRequest.UpdatedAt : (DateTimeOffset?)null,
                 ClosedAt = pullRequest.ClosedAt,
                 MergedAt = pullRequest.MergedAt,
                 CreatedBy = pullRequest.User?.Login,
@@ -323,9 +325,8 @@ namespace WhatIsTheCurrentSprint.FunctinoApp.Functions
                 Mergable = pullRequest.Mergeable,
                 MergeableState = pullRequest.MergeableState?.StringValue,
                 MergedBy = pullRequest.MergedBy?.Login,
-                Number = pullRequest.Number,
-                Base = new Models.GitRef { Ref = pullRequest.Base.Ref, Sha = pullRequest.Base.Sha },
-                Head = new Models.GitRef { Ref = pullRequest.Head.Ref, Sha = pullRequest.Head.Sha },
+                Base = new Models.GitRef { Ref = pullRequest.Base?.Ref, Sha = pullRequest.Base?.Sha },
+                Head = new Models.GitRef { Ref = pullRequest.Head?.Ref, Sha = pullRequest.Head?.Sha },
                 Url = pullRequest.HtmlUrl,
                 State = pullRequest.State.StringValue,
                 Body = pullRequest.Body

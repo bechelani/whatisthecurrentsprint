@@ -5,6 +5,9 @@ namespace WhatIsTheCurrentSprint.FunctinoApp.Models
 {
     public class WebhookPullRequest
     {
+        [JsonProperty(PropertyName = "id")]
+        public long Id { get; set;}
+
         [JsonProperty(PropertyName = "number")]
         public int Number { get; set; }
 
@@ -24,10 +27,10 @@ namespace WhatIsTheCurrentSprint.FunctinoApp.Models
         public string[] RequestedReviewers { get; set; }
 
         [JsonProperty(PropertyName = "created_at")]
-        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset? CreatedAt { get; set; }
 
         [JsonProperty(PropertyName = "updated_at")]
-        public DateTimeOffset UpdatedAt { get; set; }
+        public DateTimeOffset? UpdatedAt { get; set; }
 
         [JsonProperty(PropertyName = "closed_at")]
         public DateTimeOffset? ClosedAt { get; set; }
@@ -39,10 +42,10 @@ namespace WhatIsTheCurrentSprint.FunctinoApp.Models
         public string CreatedBy { get; set; }
 
         [JsonProperty(PropertyName = "draft")]
-        public bool Draft { get; set; }
+        public bool? Draft { get; set; }
 
         [JsonProperty(PropertyName = "merged")]
-        public bool Merged { get; set; }
+        public bool? Merged { get; set; }
 
         [JsonProperty(PropertyName = "mergable")]
         public bool? Mergable { get; set; }
