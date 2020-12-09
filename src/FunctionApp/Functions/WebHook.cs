@@ -92,16 +92,23 @@ namespace WhatIsTheCurrentSprint.FunctinoApp.Functions
             }
             else if (eventName == "check_run")
             {
+                log.LogInformation($"Deserializing request body into payload: {requestBody}");
                 var payload = DeserializeCheckRunPayloadAsync(requestBody, log);
+                log.LogInformation($"payload: {payload}");
 
                 if (payload != null)
                 {
-                    log.LogDebug("building model");
+                    log.LogInformation("building model");
 
                     var models = CreateWebhookItemModel(payload, log);
+
+                    log.LogInformation($"models: {models.Count}");
                     foreach (var model in models)
                     {
+                        log.LogInformation("adding model to cosmosDb");
                         await cosmosDbOut.AddAsync(model);
+
+                        log.LogInformation("adding model to queue");
                         await queueOut.AddAsync(model);
                     }
                 }
@@ -249,17 +256,21 @@ namespace WhatIsTheCurrentSprint.FunctinoApp.Functions
 
         private static List<Models.WebhookItem> CreateWebhookItemModel(CheckRunEventPayload payload, ILogger log)
         {
-            log.LogDebug("CreateWebhookItemModel: CheckRunEventPayload");
+            log.LogInformation("CreateWebhookItemModel: CheckRunEventPayload");
 
             if (payload.CheckRun == null)
             {
+                log.LogInformation("payload.CheckRun is null");
                 return null;
             }
 
             var models = new List<Models.WebhookItem>();
 
+            log.LogInformation($"payload.CheckRun.PullRequests: {payload.CheckRun.PullRequests.Count}");
             foreach (var pullRequest in payload.CheckRun.PullRequests)
             {
+
+                log.LogInformation("creating model");
                 var model = new Models.WebhookItem
                 {
                     Id = Guid.NewGuid().ToString(),
@@ -306,7 +317,7 @@ namespace WhatIsTheCurrentSprint.FunctinoApp.Functions
 
             var model = new Models.WebhookPullRequest
             {
-                Id = pullRequest.Id,
+                Id = pullRequest.Id.ToString(),
                 Number = pullRequest.Number,
                 Title = pullRequest.Title,
                 Milestone = pullRequest.Milestone?.Description,

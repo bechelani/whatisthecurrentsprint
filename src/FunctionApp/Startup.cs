@@ -17,16 +17,12 @@ namespace WhatIsTheCurrentSprint.FunctinoApp
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            // builder.Services.AddLogging(loggingBuilder =>
-            // {
-            //     loggingBuilder.AddFilter(level => true);
-            // });
-
-            var config = (IConfiguration)builder.Services.First(d => d.ServiceType == typeof(IConfiguration)).ImplementationInstance;
+            //var config = (IConfiguration)builder.Services.First(d => d.ServiceType == typeof(IConfiguration)).ImplementationInstance;
 
             builder.Services.AddSingleton((s) =>
             {
-                CosmosClientBuilder cosmosClientBuilder = new CosmosClientBuilder(config[Constants.COSMOS_DB_CONNECTION_STRING]);
+                // CosmosClientBuilder cosmosClientBuilder = new CosmosClientBuilder(config[Constants.COSMOS_DB_CONNECTION_STRING]);
+                var cosmosClientBuilder = new CosmosClientBuilder("AccountEndpoint=https://mbb-cosmodb.documents.azure.com:443/;AccountKey=3cNUvfuZmEprq7XC0HxJh3ucfW5PUB3zs00MFDZFMW4oXxQAKNpa1WLgkjteSJA03eGrNh9123da6vQIHIFmTA==;");
 
                 return cosmosClientBuilder
                     .WithConnectionModeDirect()
@@ -34,6 +30,8 @@ namespace WhatIsTheCurrentSprint.FunctinoApp
                     .WithBulkExecution(true)
                     .Build();
             });
+
+            builder.Services.AddLogging();
         }
     }
 }
