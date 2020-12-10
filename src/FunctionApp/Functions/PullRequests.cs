@@ -58,7 +58,7 @@ namespace WhatIsTheCurrentSprint.FunctinoApp.Functions
                 log.LogInformation("reading pull request from database. 'open'");
                 log.LogInformation($"pullRequest.Id:{webhookItem.PullRequest.Id}");
 
-                pullRequest = await _pullRequestsContainer.ReadItemAsync<PullRequest>(webhookItem.PullRequest.Id.ToString(), new PartitionKey("Open"));
+                pullRequest = await _pullRequestsContainer.ReadItemAsync<PullRequest>(webhookItem.PullRequest.Id, new PartitionKey("open"));
 
                 log.LogInformation($"pullRequest: {pullRequest}");
             }
@@ -84,7 +84,7 @@ namespace WhatIsTheCurrentSprint.FunctinoApp.Functions
                     log.LogInformation("reading pull request from database. 'close'");
                     log.LogInformation($"pullRequest.Id:{webhookItem.PullRequest.Id}");
 
-                    pullRequest = await _pullRequestsContainer.ReadItemAsync<PullRequest>(webhookItem.PullRequest.Id.ToString(), new PartitionKey("Closed"));
+                    pullRequest = await _pullRequestsContainer.ReadItemAsync<PullRequest>(webhookItem.PullRequest.Id.ToString(), new PartitionKey("closed"));
 
                     log.LogInformation($"pullRequest: {pullRequest}");
                 }
@@ -151,7 +151,7 @@ namespace WhatIsTheCurrentSprint.FunctinoApp.Functions
 
                 if (string.IsNullOrWhiteSpace(pullRequest.State))
                 {
-                    pullRequest.State = "Open";
+                    pullRequest.State = "open";
                 }
 
                 // save pull request to database
