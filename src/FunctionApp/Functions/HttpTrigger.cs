@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace WhatIsTheCurrentSprint.FunctinoApp.Functions
+namespace WhatIsTheCurrentSprint.FunctionApp.Functions
 {
     public static class HttpTrigger
     {

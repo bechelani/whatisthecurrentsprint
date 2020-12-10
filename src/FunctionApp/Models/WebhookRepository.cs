@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace WhatIsTheCurrentSprint.FunctinoApp.Models
+namespace WhatIsTheCurrentSprint.FunctionApp.Models
 {
     public class WebhookRepository
     {

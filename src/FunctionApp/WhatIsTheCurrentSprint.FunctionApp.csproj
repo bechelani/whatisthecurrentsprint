@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AzureFunctionsVersion>v3</AzureFunctionsVersion>
-    <RootNamespace>WhatIsTheCurrentSprint.FunctinoApp</RootNamespace>
+    <RootNamespace>WhatIsTheCurrentSprint.FunctionApp</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.15.0" />

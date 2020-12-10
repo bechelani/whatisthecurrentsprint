@@ -6,10 +6,10 @@ using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using WhatIsTheCurrentSprint.FunctinoApp.Helpers;
-using WhatIsTheCurrentSprint.FunctinoApp.Models;
+using WhatIsTheCurrentSprint.FunctionApp.Helpers;
+using WhatIsTheCurrentSprint.FunctionApp.Models;
 
-namespace WhatIsTheCurrentSprint.FunctinoApp.Functions
+namespace WhatIsTheCurrentSprint.FunctionApp.Functions
 {
     public class PullRequests
     {
@@ -40,15 +40,15 @@ namespace WhatIsTheCurrentSprint.FunctinoApp.Functions
         {
             log.LogInformation($"pull-request function is processing a request.");
 
-            //log.LogInformation($"cosmosClient: {_cosmosClient}");
-
             log.LogInformation("Deserializing queue message.");
 
             var webhookItem = JsonConvert.DeserializeObject<WebhookItem>(myQueueItem);
 
+            var correlationId = webhookItem.CorrelationId;
+
             log.LogInformation($"webhookItem: {webhookItem}");
 
-            log.LogInformation($"pull-request function is processing a {webhookItem.Type} message queue item type.");
+            log.LogInformation($"pull-request function is processing a {webhookItem.Event} message queue item type.");
 
             PullRequest pullRequest = null;
 
@@ -111,7 +111,7 @@ namespace WhatIsTheCurrentSprint.FunctinoApp.Functions
                 log.LogInformation($"pullRequest: {pullRequest}");
             }
 
-            if (webhookItem.Type == Constants.PULL_REQUEST_TYPE)
+            if (webhookItem.Event == Constants.PULL_REQUEST_TYPE)
             {
                 log.LogInformation("processing pull request type");
 
@@ -120,13 +120,13 @@ namespace WhatIsTheCurrentSprint.FunctinoApp.Functions
                     // need to change partition key for item
                 }
             }
-            else if (webhookItem.Type == Constants.CHECK_RUN_TYPE)
+            else if (webhookItem.Event == Constants.CHECK_RUN_TYPE)
             {
                 log.LogInformation("processing check run type");
 
                 pullRequest.CheckRuns.Add(webhookItem.CheckRun);
             }
-            else if (webhookItem.Type == Constants.PULL_REQUEST_REVIEW_TYPE)
+            else if (webhookItem.Event == Constants.PULL_REQUEST_REVIEW_TYPE)
             {
                 log.LogInformation("processing pull request review type");
 

@@ -7,11 +7,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using WhatIsTheCurrentSprint.FunctinoApp;
-using WhatIsTheCurrentSprint.FunctinoApp.Helpers;
+using WhatIsTheCurrentSprint.FunctionApp;
+using WhatIsTheCurrentSprint.FunctionApp.Helpers;
 
 [assembly: FunctionsStartup(typeof(Startup))]
-namespace WhatIsTheCurrentSprint.FunctinoApp
+namespace WhatIsTheCurrentSprint.FunctionApp
 {
     public class Startup : FunctionsStartup
     {
