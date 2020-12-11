@@ -99,7 +99,7 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
                     }
                     else
                     {
-                        log.LogError(new EventId((int)LoggingConstants.EventId.WebhookFunctionProcessingStart),
+                        log.LogError(new EventId((int)LoggingConstants.EventId.WebhookFunctionProcessingFailed),
                             LoggingConstants.Template,
                             LoggingConstants.EventId.WebhookFunctionProcessingFailed.ToString(),
                             LoggingConstants.EntityType.PullRequest.ToString(),
@@ -185,7 +185,7 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
                     return (ActionResult) new BadRequestResult();
                 }
 
-                log.LogInformation(new EventId((int)LoggingConstants.EventId.WebhookFunctionProcessingStart),
+                log.LogInformation(new EventId((int)LoggingConstants.EventId.WebhookFunctionProcessingSucceeded),
                     LoggingConstants.Template,
                     LoggingConstants.EventId.WebhookFunctionProcessingSucceeded.ToString(),
                     LoggingConstants.EntityType.PullRequest.ToString(),
