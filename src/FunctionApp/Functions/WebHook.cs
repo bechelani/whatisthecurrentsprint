@@ -18,14 +18,14 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
     public class WebHook
     {
         /// <summary>
-        /// Sample Function to show structured and correlated logging on Azure Functions using ILogger.
+        /// Function to process GitHub pull request webhooks.
         /// Triggered by an Http post and drops a message into a Azure Storage message queue.
-        /// Checks whether an order is valid and logs an event accordingly
         /// </summary>
-        /// <param name="req">Expects an order in the JSON format, with the 'orderNumber' property</param>
-        /// <param name="outMessage"></param>
+        /// <param name="req">Expects a payload in JSON format</param>
+        /// <param name="cosmosDbOut"></param>
+        /// <param name="queueOut"></param>
         /// <param name="log"></param>
-        /// <returns></returns>
+        /// <returns>IActionResult of OK or BadRequest.</returns>
         [FunctionName("webhook")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
@@ -45,7 +45,7 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
                     LoggingConstants.EventId.WebhookFunctionProcessingStart.ToString(),
                     LoggingConstants.EntityType.PullRequest.ToString(),
                     null,
-                    null,
+                    LoggingConstants.Status.InProgress.ToString(),
                     correlationId,
                     LoggingConstants.CheckPoint.Publisher.ToString(),
                     "webhook function is processing a request.");
@@ -66,12 +66,12 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
                 // check what event was triggered
                 if (!req.Headers.TryGetValue("X-GitHub-Event", out var eventNames))
                 {
-                    log.LogError(new EventId((int)LoggingConstants.EventId.WebhookFunctionProcessingStart),
+                    log.LogError(new EventId((int)LoggingConstants.EventId.WebhookFunctionProcessingFailed),
                         LoggingConstants.Template,
                         LoggingConstants.EventId.WebhookFunctionProcessingFailed.ToString(),
                         LoggingConstants.EntityType.PullRequest.ToString(),
                         null,
-                        null,
+                        LoggingConstants.Status.Failed.ToString(),
                         correlationId,
                         LoggingConstants.CheckPoint.Publisher.ToString(),
                         "Did not find X-GitHub-Event header.");
@@ -128,7 +128,7 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
                     }
                     else
                     {
-                        log.LogError(new EventId((int)LoggingConstants.EventId.WebhookFunctionProcessingStart),
+                        log.LogError(new EventId((int)LoggingConstants.EventId.WebhookFunctionProcessingFailed),
                             LoggingConstants.Template,
                             LoggingConstants.EventId.WebhookFunctionProcessingFailed.ToString(),
                             LoggingConstants.EntityType.PullRequest.ToString(),
@@ -160,7 +160,7 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
                     }
                     else
                     {
-                        log.LogError(new EventId((int)LoggingConstants.EventId.WebhookFunctionProcessingStart),
+                        log.LogError(new EventId((int)LoggingConstants.EventId.WebhookFunctionProcessingFailed),
                             LoggingConstants.Template,
                             LoggingConstants.EventId.WebhookFunctionProcessingFailed.ToString(),
                             LoggingConstants.EntityType.PullRequest.ToString(),
@@ -443,9 +443,13 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
 
             var model = new Models.WebhookPullRequestReview
             {
+                Id = pullRequestReview.Id,
+                CommitId = pullRequestReview.CommitId,
+                SubmittedAt = pullRequestReview.SubmittedAt,
+                SubmittedBy = pullRequestReview.User.Login,
                 Url = pullRequestReview.HtmlUrl,
                 State = pullRequestReview.State.StringValue,
-                Body = pullRequestReview.Body
+                Body = pullRequestReview.Body,
             };
 
             return model;
@@ -462,6 +466,8 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
 
             var model = new Models.WebhookCheckRun
             {
+                Id = checkRun.Id,
+                HeadSha = checkRun.HeadSha,
                 Name = checkRun.Name,
                 StartedAt = checkRun.StartedAt,
                 CompletedAt = checkRun.CompletedAt,

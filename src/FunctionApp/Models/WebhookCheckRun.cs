@@ -5,6 +5,12 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Models
 {
     public class WebhookCheckRun
     {
+        [JsonProperty(PropertyName = "id")]
+        public long Id { get; set; }
+
+        [JsonProperty(PropertyName = "head_sha")]
+        public string HeadSha { get; set; }
+
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 

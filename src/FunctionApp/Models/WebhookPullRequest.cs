@@ -12,7 +12,7 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Models
         public int Number { get; set; }
 
         [JsonProperty(PropertyName = "state")]
-        public string State { get; set; }
+        public string State { get; set; } = "open";
 
         [JsonProperty(PropertyName = "title")]
         public string Title { get; set; }

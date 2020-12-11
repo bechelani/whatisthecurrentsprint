@@ -44,7 +44,8 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Logging
         {
             Succeeded,
             Failed,
-            Discarded
+            Discarded,
+            InProgress
         }
     }
 }

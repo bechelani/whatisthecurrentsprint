@@ -5,6 +5,9 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Models
 {
     public class WebhookPullRequestReview
     {
+        [JsonProperty(PropertyName = "id")]
+        public long Id { get; set; }
+
         [JsonProperty(PropertyName = "commit_id")]
         public string CommitId { get; set; }
 
