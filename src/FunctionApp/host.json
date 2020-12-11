@@ -1,16 +1,23 @@
 {
-    "version": "2.0",
-    "extensions": {
-        "cosmosDB": {
-            "connectionMode": "Gateway",
-            "protocol": "Https"
-        }
-    },
-    "logging": {
-        "applicationInsights": {
-            "samplingSettings": {
-                "isEnabled": true
-            }
-        }
+  "version": "2.0",
+  "extensions": {
+    "cosmosDB": {
+      "connectionMode": "Gateway",
+      "protocol": "Https"
     }
+  },
+  "logging": {
+    "fileLoggingMode": "always",
+    "logLevel": {
+      "default": "Trace",
+      "Function": "Trace",
+      "Host.Aggregator": "Trace",
+      "Host.Results": "Trace"
+    },
+    "applicationInsights": {
+      "samplingSettings": {
+        "isEnabled": true
+      }
+    }
+  }
 }
