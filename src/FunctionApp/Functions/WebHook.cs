@@ -40,14 +40,14 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
 
             try
             {
-                log.LogInformation(new EventId((int)LoggingConstants.EventId.WebhookFunctionProcessingStart),
+                log.LogInformation(new EventId((int)LoggingConstants.EventId.WebhookFunctionStart),
                     LoggingConstants.Template,
-                    LoggingConstants.EventId.WebhookFunctionProcessingStart.ToString(),
+                    LoggingConstants.EventId.WebhookFunctionStart.ToString(),
                     LoggingConstants.EntityType.PullRequest.ToString(),
                     null,
                     LoggingConstants.Status.InProgress.ToString(),
                     correlationId,
-                    LoggingConstants.CheckPoint.Publisher.ToString(),
+                    LoggingConstants.CheckPoint.WebhookFunc.ToString(),
                     "webhook function is processing a request.");
 
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
@@ -66,14 +66,14 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
                 // check what event was triggered
                 if (!req.Headers.TryGetValue("X-GitHub-Event", out var eventNames))
                 {
-                    log.LogError(new EventId((int)LoggingConstants.EventId.WebhookFunctionProcessingFailed),
+                    log.LogError(new EventId((int)LoggingConstants.EventId.WebhookFunctionFailed),
                         LoggingConstants.Template,
-                        LoggingConstants.EventId.WebhookFunctionProcessingFailed.ToString(),
+                        LoggingConstants.EventId.WebhookFunctionFailed.ToString(),
                         LoggingConstants.EntityType.PullRequest.ToString(),
                         null,
                         LoggingConstants.Status.Failed.ToString(),
                         correlationId,
-                        LoggingConstants.CheckPoint.Publisher.ToString(),
+                        LoggingConstants.CheckPoint.WebhookFunc.ToString(),
                         "Did not find X-GitHub-Event header.");
 
                     return (ActionResult) new BadRequestResult();
@@ -81,32 +81,58 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
 
                 var eventName = eventNames.First();
 
-                log.LogDebug($"webhook function is processing a {eventName} event.");
+                log.LogDebug(new EventId((int)LoggingConstants.EventId.WebhookFunctionDebug),
+                    LoggingConstants.Template,
+                    LoggingConstants.EventId.WebhookFunctionDebug.ToString(),
+                    LoggingConstants.EntityType.PullRequest.ToString(),
+                    null,
+                    LoggingConstants.Status.InProgress.ToString(),
+                    correlationId,
+                    LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                    $"webhook function is processing a {eventName} event.");
 
                 if (eventName == "pull_request")
                 {
-                    var payload = DeserializePullRequestPayloadAsync(requestBody, log);
+                    var payload = DeserializePullRequestPayloadAsync(requestBody, correlationId, log);
 
                     if (payload != null)
                     {
                         var model = CreateWebhookItemModel(payload, correlationId, log);
 
-                        log.LogDebug("adding model to cosmosDb");
+                        log.LogDebug(new EventId((int)LoggingConstants.EventId.WebhookFunctionDebug),
+                            LoggingConstants.Template,
+                            LoggingConstants.EventId.WebhookFunctionDebug.ToString(),
+                            LoggingConstants.EntityType.PullRequest.ToString(),
+                            null,
+                            LoggingConstants.Status.InProgress.ToString(),
+                            correlationId,
+                            LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                            "adding model to cosmosDb");
+
                         await cosmosDbOut.AddAsync(model);
 
-                        log.LogDebug("adding model to queue");
+                        log.LogDebug(new EventId((int)LoggingConstants.EventId.WebhookFunctionDebug),
+                            LoggingConstants.Template,
+                            LoggingConstants.EventId.WebhookFunctionDebug.ToString(),
+                            LoggingConstants.EntityType.PullRequest.ToString(),
+                            null,
+                            LoggingConstants.Status.InProgress.ToString(),
+                            correlationId,
+                            LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                            "adding model to queue");
+
                         await queueOut.AddAsync(model);
                     }
                     else
                     {
-                        log.LogError(new EventId((int)LoggingConstants.EventId.WebhookFunctionProcessingFailed),
+                        log.LogError(new EventId((int)LoggingConstants.EventId.WebhookFunctionFailed),
                             LoggingConstants.Template,
-                            LoggingConstants.EventId.WebhookFunctionProcessingFailed.ToString(),
+                            LoggingConstants.EventId.WebhookFunctionFailed.ToString(),
                             LoggingConstants.EntityType.PullRequest.ToString(),
                             null,
                             LoggingConstants.Status.Failed.ToString(),
                             correlationId,
-                            LoggingConstants.CheckPoint.Publisher.ToString(),
+                            LoggingConstants.CheckPoint.WebhookFunc.ToString(),
                             $"Payload was incorrect.");
 
                         return (ActionResult) new BadRequestResult();
@@ -114,28 +140,46 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
                 }
                 else if (eventName == "pull_request_review")
                 {
-                    var payload = DeserializePullRequestReviewPayloadAsync(requestBody, log);
+                    var payload = DeserializePullRequestReviewPayloadAsync(requestBody, correlationId, log);
 
                     if (payload != null)
                     {
                         var model = CreateWebhookItemModel(payload, correlationId, log);
 
-                        log.LogDebug("adding model to cosmosDb");
+                        log.LogDebug(new EventId((int)LoggingConstants.EventId.WebhookFunctionDebug),
+                            LoggingConstants.Template,
+                            LoggingConstants.EventId.WebhookFunctionDebug.ToString(),
+                            LoggingConstants.EntityType.PullRequest.ToString(),
+                            null,
+                            LoggingConstants.Status.InProgress.ToString(),
+                            correlationId,
+                            LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                            "adding model to cosmosDb");
+
                         await cosmosDbOut.AddAsync(model);
 
-                        log.LogDebug("adding model to queue");
+                        log.LogDebug(new EventId((int)LoggingConstants.EventId.WebhookFunctionDebug),
+                            LoggingConstants.Template,
+                            LoggingConstants.EventId.WebhookFunctionDebug.ToString(),
+                            LoggingConstants.EntityType.PullRequest.ToString(),
+                            null,
+                            LoggingConstants.Status.InProgress.ToString(),
+                            correlationId,
+                            LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                            "adding model to queue");
+
                         await queueOut.AddAsync(model);
                     }
                     else
                     {
-                        log.LogError(new EventId((int)LoggingConstants.EventId.WebhookFunctionProcessingFailed),
+                        log.LogError(new EventId((int)LoggingConstants.EventId.WebhookFunctionFailed),
                             LoggingConstants.Template,
-                            LoggingConstants.EventId.WebhookFunctionProcessingFailed.ToString(),
+                            LoggingConstants.EventId.WebhookFunctionFailed.ToString(),
                             LoggingConstants.EntityType.PullRequest.ToString(),
                             null,
                             LoggingConstants.Status.Failed.ToString(),
                             correlationId,
-                            LoggingConstants.CheckPoint.Publisher.ToString(),
+                            LoggingConstants.CheckPoint.WebhookFunc.ToString(),
                             $"Payload was incorrect.");
 
                         return (ActionResult) new BadRequestResult();
@@ -143,7 +187,7 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
                 }
                 else if (eventName == "check_run")
                 {
-                    var payload = DeserializeCheckRunPayloadAsync(requestBody, log);
+                    var payload = DeserializeCheckRunPayloadAsync(requestBody, correlationId, log);
 
                     if (payload != null)
                     {
@@ -151,23 +195,41 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
 
                         foreach (var model in models)
                         {
-                            log.LogDebug("adding model to cosmosDb");
+                            log.LogDebug(new EventId((int)LoggingConstants.EventId.WebhookFunctionDebug),
+                                LoggingConstants.Template,
+                                LoggingConstants.EventId.WebhookFunctionDebug.ToString(),
+                                LoggingConstants.EntityType.PullRequest.ToString(),
+                                null,
+                                LoggingConstants.Status.InProgress.ToString(),
+                                correlationId,
+                                LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                                "adding model to cosmosDb");
+
                             await cosmosDbOut.AddAsync(model);
 
-                            log.LogDebug("adding model to queue");
+                            log.LogDebug(new EventId((int)LoggingConstants.EventId.WebhookFunctionDebug),
+                                LoggingConstants.Template,
+                                LoggingConstants.EventId.WebhookFunctionDebug.ToString(),
+                                LoggingConstants.EntityType.PullRequest.ToString(),
+                                null,
+                                LoggingConstants.Status.InProgress.ToString(),
+                                correlationId,
+                                LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                                "adding model to queue");
+
                             await queueOut.AddAsync(model);
                         }
                     }
                     else
                     {
-                        log.LogError(new EventId((int)LoggingConstants.EventId.WebhookFunctionProcessingFailed),
+                        log.LogError(new EventId((int)LoggingConstants.EventId.WebhookFunctionFailed),
                             LoggingConstants.Template,
-                            LoggingConstants.EventId.WebhookFunctionProcessingFailed.ToString(),
+                            LoggingConstants.EventId.WebhookFunctionFailed.ToString(),
                             LoggingConstants.EntityType.PullRequest.ToString(),
                             null,
                             LoggingConstants.Status.Failed.ToString(),
                             correlationId,
-                            LoggingConstants.CheckPoint.Publisher.ToString(),
+                            LoggingConstants.CheckPoint.WebhookFunc.ToString(),
                             $"Payload was incorrect.");
 
                         return (ActionResult) new BadRequestResult();
@@ -175,24 +237,41 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
                 }
                 else if (eventName == "ping")
                 {
-                    var payload = DeserializePingPayloadAsync(requestBody, log);
+                    var payload = DeserializePingPayloadAsync(requestBody, correlationId, log);
 
-                    log.LogDebug($"Zen: {payload.zen}");
+                    log.LogDebug(new EventId((int)LoggingConstants.EventId.WebhookFunctionDebug),
+                        LoggingConstants.Template,
+                        LoggingConstants.EventId.WebhookFunctionDebug.ToString(),
+                        LoggingConstants.EntityType.PullRequest.ToString(),
+                        null,
+                        LoggingConstants.Status.InProgress.ToString(),
+                        correlationId,
+                        LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                        $"Zen: {payload.zen}");
                 }
                 else
                 {
-                    log.LogError($"{eventName} did not match any event.");
+                    log.LogError(new EventId((int)LoggingConstants.EventId.WebhookFunctionFailed),
+                        LoggingConstants.Template,
+                        LoggingConstants.EventId.WebhookFunctionFailed.ToString(),
+                        LoggingConstants.EntityType.PullRequest.ToString(),
+                        null,
+                        LoggingConstants.Status.Failed.ToString(),
+                        correlationId,
+                        LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                        $"{eventName} did not match any event.");
+
                     return (ActionResult) new BadRequestResult();
                 }
 
-                log.LogInformation(new EventId((int)LoggingConstants.EventId.WebhookFunctionProcessingSucceeded),
+                log.LogInformation(new EventId((int)LoggingConstants.EventId.WebhookFunctionSucceeded),
                     LoggingConstants.Template,
-                    LoggingConstants.EventId.WebhookFunctionProcessingSucceeded.ToString(),
+                    LoggingConstants.EventId.WebhookFunctionSucceeded.ToString(),
                     LoggingConstants.EntityType.PullRequest.ToString(),
                     null,
                     LoggingConstants.Status.Succeeded.ToString(),
                     correlationId,
-                    LoggingConstants.CheckPoint.Publisher.ToString(),
+                    LoggingConstants.CheckPoint.WebhookFunc.ToString(),
                     "webhook function returned 200.");
 
                 return (ActionResult) new OkResult();
@@ -200,23 +279,32 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
             catch (Exception ex)
             {
                 // log an error for an unexcepted exception
-                log.LogError(new EventId((int)LoggingConstants.EventId.WebhookFunctionProcessingFailed),
+                log.LogError(new EventId((int)LoggingConstants.EventId.WebhookFunctionFailed),
+                    ex,
                     LoggingConstants.Template,
-                    LoggingConstants.EventId.WebhookFunctionProcessingFailed.ToString(),
+                    LoggingConstants.EventId.WebhookFunctionFailed.ToString(),
                     LoggingConstants.EntityType.PullRequest.ToString(),
                     null,
                     LoggingConstants.Status.Failed.ToString(),
                     correlationId,
-                    LoggingConstants.CheckPoint.Publisher.ToString(),
+                    LoggingConstants.CheckPoint.WebhookFunc.ToString(),
                     $"An unexcepted exception occurred. {ex.Message}");
 
                 throw;
             }
         }
 
-        private static PullRequestEventPayload DeserializePullRequestPayloadAsync(string json, ILogger log)
+        private static PullRequestEventPayload DeserializePullRequestPayloadAsync(string json, string correlationId, ILogger log)
         {
-            log.LogDebug("DeserializePullRequestPayloadAsync");
+            log.LogDebug(new EventId((int)LoggingConstants.EventId.WebhookFunctionDebug),
+                LoggingConstants.Template,
+                LoggingConstants.EventId.WebhookFunctionDebug.ToString(),
+                LoggingConstants.EntityType.PullRequest.ToString(),
+                null,
+                LoggingConstants.Status.InProgress.ToString(),
+                correlationId,
+                LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                "DeserializePullRequestPayloadAsync");
 
             try
             {
@@ -227,15 +315,32 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
             }
             catch (Exception ex)
             {
-                log.LogError(ex, ex.Message);
+                log.LogError(new EventId((int)LoggingConstants.EventId.WebhookFunctionError),
+                    ex,
+                    LoggingConstants.Template,
+                    LoggingConstants.EventId.WebhookFunctionError.ToString(),
+                    LoggingConstants.EntityType.PullRequest.ToString(),
+                    null,
+                    LoggingConstants.Status.Failed.ToString(),
+                    correlationId,
+                    LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                    ex.Message);
             }
 
             return null;
         }
 
-        private static PullRequestReviewEventPayload DeserializePullRequestReviewPayloadAsync(string json, ILogger log)
+        private static PullRequestReviewEventPayload DeserializePullRequestReviewPayloadAsync(string json, string correlationId, ILogger log)
         {
-            log.LogDebug("DeserializePullRequestReviewPayloadAsync");
+            log.LogDebug(new EventId((int)LoggingConstants.EventId.WebhookFunctionDebug),
+                LoggingConstants.Template,
+                LoggingConstants.EventId.WebhookFunctionDebug.ToString(),
+                LoggingConstants.EntityType.PullRequest.ToString(),
+                null,
+                LoggingConstants.Status.InProgress.ToString(),
+                correlationId,
+                LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                "DeserializePullRequestReviewPayloadAsync");
 
             try
             {
@@ -246,15 +351,32 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
             }
             catch (Exception ex)
             {
-                log.LogError(ex, ex.Message);
+                log.LogError(new EventId((int)LoggingConstants.EventId.WebhookFunctionError),
+                    ex,
+                    LoggingConstants.Template,
+                    LoggingConstants.EventId.WebhookFunctionError.ToString(),
+                    LoggingConstants.EntityType.PullRequest.ToString(),
+                    null,
+                    LoggingConstants.Status.Failed.ToString(),
+                    correlationId,
+                    LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                    ex.Message);
             }
 
             return null;
         }
 
-        private static CheckRunEventPayload DeserializeCheckRunPayloadAsync(string json, ILogger log)
+        private static CheckRunEventPayload DeserializeCheckRunPayloadAsync(string json, string correlationId, ILogger log)
         {
-            log.LogDebug("DeserializeCheckRunPayloadAsync");
+            log.LogDebug(new EventId((int)LoggingConstants.EventId.WebhookFunctionDebug),
+                LoggingConstants.Template,
+                LoggingConstants.EventId.WebhookFunctionDebug.ToString(),
+                LoggingConstants.EntityType.PullRequest.ToString(),
+                null,
+                LoggingConstants.Status.InProgress.ToString(),
+                correlationId,
+                LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                "DeserializeCheckRunPayloadAsync");
 
             try
             {
@@ -265,19 +387,44 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
             }
             catch (Exception ex)
             {
-                log.LogError(ex, ex.Message);
+                log.LogError(new EventId((int)LoggingConstants.EventId.WebhookFunctionError),
+                    ex,
+                    LoggingConstants.Template,
+                    LoggingConstants.EventId.WebhookFunctionError.ToString(),
+                    LoggingConstants.EntityType.PullRequest.ToString(),
+                    null,
+                    LoggingConstants.Status.Failed.ToString(),
+                    correlationId,
+                    LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                    ex.Message);
             }
 
             return null;
         }
 
-        private static dynamic DeserializePingPayloadAsync(string json, ILogger log)
+        private static dynamic DeserializePingPayloadAsync(string json, string correlationId, ILogger log)
         {
-            log.LogDebug("DeserializePingPayloadAsync");
+            log.LogDebug(new EventId((int)LoggingConstants.EventId.WebhookFunctionDebug),
+                LoggingConstants.Template,
+                LoggingConstants.EventId.WebhookFunctionDebug.ToString(),
+                LoggingConstants.EntityType.PullRequest.ToString(),
+                null,
+                LoggingConstants.Status.InProgress.ToString(),
+                correlationId,
+                LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                "DeserializePingPayloadAsync");
 
             var serializer = new SimpleJsonSerializer();
 
-            log.LogDebug($"json:{json}");
+            log.LogDebug(new EventId((int)LoggingConstants.EventId.WebhookFunctionDebug),
+                LoggingConstants.Template,
+                LoggingConstants.EventId.WebhookFunctionDebug.ToString(),
+                LoggingConstants.EntityType.PullRequest.ToString(),
+                null,
+                LoggingConstants.Status.InProgress.ToString(),
+                correlationId,
+                LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                $"json:{json}");
 
             try
             {
@@ -287,7 +434,16 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
             }
             catch (Exception ex)
             {
-                log.LogError(ex, ex.Message);
+                log.LogError(new EventId((int)LoggingConstants.EventId.WebhookFunctionError),
+                    ex,
+                    LoggingConstants.Template,
+                    LoggingConstants.EventId.WebhookFunctionError.ToString(),
+                    LoggingConstants.EntityType.PullRequest.ToString(),
+                    null,
+                    LoggingConstants.Status.Failed.ToString(),
+                    correlationId,
+                    LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                    ex.Message);
             }
 
             return null;
@@ -295,7 +451,15 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
 
         private static Models.WebhookItem CreateWebhookItemModel(PullRequestEventPayload payload, string correlationId, ILogger log)
         {
-            log.LogDebug("CreateWebhookItemModel: PullRequestEventPayload");
+            log.LogDebug(new EventId((int)LoggingConstants.EventId.WebhookFunctionDebug),
+                LoggingConstants.Template,
+                LoggingConstants.EventId.WebhookFunctionDebug.ToString(),
+                LoggingConstants.EntityType.PullRequest.ToString(),
+                null,
+                LoggingConstants.Status.InProgress.ToString(),
+                correlationId,
+                LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                "CreateWebhookItemModel: PullRequestEventPayload");
 
             if (payload.PullRequest == null)
             {
@@ -309,8 +473,8 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
                 CorrelationId = correlationId,
                 Action = payload.Action,
                 Event = Constants.PULL_REQUEST_TYPE,
-                Repository = CreateWebhookRepositoryModel(payload.Repository, log),
-                PullRequest = CreateWebhookPullRequestModel(payload.PullRequest, log)
+                Repository = CreateWebhookRepositoryModel(payload.Repository, correlationId, log),
+                PullRequest = CreateWebhookPullRequestModel(payload.PullRequest, correlationId, log)
             };
 
             return model;
@@ -318,7 +482,15 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
 
         private static Models.WebhookItem CreateWebhookItemModel(PullRequestReviewEventPayload payload, string correlationId, ILogger log)
         {
-            log.LogDebug("CreateWebhookItemModel: PullRequestReviewEventPayload");
+            log.LogDebug(new EventId((int)LoggingConstants.EventId.WebhookFunctionDebug),
+                LoggingConstants.Template,
+                LoggingConstants.EventId.WebhookFunctionDebug.ToString(),
+                LoggingConstants.EntityType.PullRequest.ToString(),
+                null,
+                LoggingConstants.Status.InProgress.ToString(),
+                correlationId,
+                LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                "CreateWebhookItemModel: PullRequestReviewEventPayload");
 
             if (payload.PullRequest == null || payload.Review == null)
             {
@@ -332,9 +504,9 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
                 CorrelationId = correlationId,
                 Action = payload.Action,
                 Event = Constants.PULL_REQUEST_REVIEW_TYPE,
-                Repository = CreateWebhookRepositoryModel(payload.Repository, log),
-                PullRequest = CreateWebhookPullRequestModel(payload.PullRequest, log),
-                Review = CreateWebhookPullRequestReviewModel(payload.Review, log)
+                Repository = CreateWebhookRepositoryModel(payload.Repository, correlationId, log),
+                PullRequest = CreateWebhookPullRequestModel(payload.PullRequest, correlationId, log),
+                Review = CreateWebhookPullRequestReviewModel(payload.Review, correlationId, log)
             };
 
             return model;
@@ -342,21 +514,54 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
 
         private static List<Models.WebhookItem> CreateWebhookItemModel(CheckRunEventPayload payload, string correlationId, ILogger log)
         {
-            log.LogDebug("CreateWebhookItemModel: CheckRunEventPayload");
+            log.LogDebug(new EventId((int)LoggingConstants.EventId.WebhookFunctionDebug),
+                LoggingConstants.Template,
+                LoggingConstants.EventId.WebhookFunctionDebug.ToString(),
+                LoggingConstants.EntityType.PullRequest.ToString(),
+                null,
+                LoggingConstants.Status.InProgress.ToString(),
+                correlationId,
+                LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                "CreateWebhookItemModel: CheckRunEventPayload");
 
             if (payload.CheckRun == null)
             {
-                log.LogDebug("payload.CheckRun is null");
+                log.LogDebug(new EventId((int)LoggingConstants.EventId.WebhookFunctionDebug),
+                    LoggingConstants.Template,
+                    LoggingConstants.EventId.WebhookFunctionDebug.ToString(),
+                    LoggingConstants.EntityType.PullRequest.ToString(),
+                    null,
+                    LoggingConstants.Status.InProgress.ToString(),
+                    correlationId,
+                    LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                    "payload.CheckRun is null");
+
                 return null;
             }
 
             var models = new List<Models.WebhookItem>();
 
-            log.LogDebug($"payload.CheckRun.PullRequests: {payload.CheckRun.PullRequests.Count}");
+            log.LogDebug(new EventId((int)LoggingConstants.EventId.WebhookFunctionDebug),
+                LoggingConstants.Template,
+                LoggingConstants.EventId.WebhookFunctionDebug.ToString(),
+                LoggingConstants.EntityType.PullRequest.ToString(),
+                null,
+                LoggingConstants.Status.InProgress.ToString(),
+                correlationId,
+                LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                $"payload.CheckRun.PullRequests: {payload.CheckRun.PullRequests.Count}");
 
             foreach (var pullRequest in payload.CheckRun.PullRequests)
             {
-                log.LogDebug("creating model");
+                log.LogDebug(new EventId((int)LoggingConstants.EventId.WebhookFunctionDebug),
+                    LoggingConstants.Template,
+                    LoggingConstants.EventId.WebhookFunctionDebug.ToString(),
+                    LoggingConstants.EntityType.PullRequest.ToString(),
+                    null,
+                    LoggingConstants.Status.InProgress.ToString(),
+                    correlationId,
+                    LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                    "creating model");
 
                 var model = new Models.WebhookItem
                 {
@@ -365,9 +570,9 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
                     CorrelationId = correlationId,
                     Action = payload.Action,
                     Event = Constants.CHECK_RUN_TYPE,
-                    Repository = CreateWebhookRepositoryModel(payload.Repository, log),
-                    PullRequest = CreateWebhookPullRequestModel(pullRequest, log),
-                    CheckRun = CreateWebhookCheckRunModel(payload.CheckRun, log)
+                    Repository = CreateWebhookRepositoryModel(payload.Repository, correlationId, log),
+                    PullRequest = CreateWebhookPullRequestModel(pullRequest, correlationId, log),
+                    CheckRun = CreateWebhookCheckRunModel(payload.CheckRun, correlationId, log)
                 };
 
                 models.Add(model);
@@ -376,9 +581,17 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
             return models;
         }
 
-        private static Models.WebhookRepository CreateWebhookRepositoryModel(Repository repository, ILogger log)
+        private static Models.WebhookRepository CreateWebhookRepositoryModel(Repository repository, string correlationId, ILogger log)
         {
-            log.LogDebug("CreateWebhookRepositoryModel");
+            log.LogDebug(new EventId((int)LoggingConstants.EventId.WebhookFunctionDebug),
+                LoggingConstants.Template,
+                LoggingConstants.EventId.WebhookFunctionDebug.ToString(),
+                LoggingConstants.EntityType.PullRequest.ToString(),
+                null,
+                LoggingConstants.Status.InProgress.ToString(),
+                correlationId,
+                LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                "CreateWebhookRepositoryModel");
 
             if (repository== null)
             {
@@ -394,9 +607,17 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
             return model;
         }
 
-        private static Models.WebhookPullRequest CreateWebhookPullRequestModel(PullRequest pullRequest, ILogger log)
+        private static Models.WebhookPullRequest CreateWebhookPullRequestModel(PullRequest pullRequest, string correlationId, ILogger log)
         {
-            log.LogDebug("CreateWebhookPullRequestModel");
+            log.LogDebug(new EventId((int)LoggingConstants.EventId.WebhookFunctionDebug),
+                LoggingConstants.Template,
+                LoggingConstants.EventId.WebhookFunctionDebug.ToString(),
+                LoggingConstants.EntityType.PullRequest.ToString(),
+                null,
+                LoggingConstants.Status.InProgress.ToString(),
+                correlationId,
+                LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                "CreateWebhookPullRequestModel");
 
             if (pullRequest== null)
             {
@@ -432,9 +653,17 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
             return model;
         }
 
-        private static Models.WebhookPullRequestReview CreateWebhookPullRequestReviewModel(PullRequestReview pullRequestReview, ILogger log)
+        private static Models.WebhookPullRequestReview CreateWebhookPullRequestReviewModel(PullRequestReview pullRequestReview, string correlationId, ILogger log)
         {
-            log.LogDebug("CreateWebhookPullRequestReviewModel");
+            log.LogDebug(new EventId((int)LoggingConstants.EventId.WebhookFunctionDebug),
+                LoggingConstants.Template,
+                LoggingConstants.EventId.WebhookFunctionDebug.ToString(),
+                LoggingConstants.EntityType.PullRequest.ToString(),
+                null,
+                LoggingConstants.Status.InProgress.ToString(),
+                correlationId,
+                LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                "CreateWebhookPullRequestReviewModel");
 
             if (pullRequestReview== null)
             {
@@ -455,9 +684,17 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Functions
             return model;
         }
 
-        private static Models.WebhookCheckRun CreateWebhookCheckRunModel(CheckRun checkRun, ILogger log)
+        private static Models.WebhookCheckRun CreateWebhookCheckRunModel(CheckRun checkRun, string correlationId, ILogger log)
         {
-            log.LogDebug("CreateWebhookCheckRunModel");
+            log.LogDebug(new EventId((int)LoggingConstants.EventId.WebhookFunctionDebug),
+                LoggingConstants.Template,
+                LoggingConstants.EventId.WebhookFunctionDebug.ToString(),
+                LoggingConstants.EntityType.PullRequest.ToString(),
+                null,
+                LoggingConstants.Status.InProgress.ToString(),
+                correlationId,
+                LoggingConstants.CheckPoint.WebhookFunc.ToString(),
+                "CreateWebhookCheckRunModel");
 
             if (checkRun== null)
             {

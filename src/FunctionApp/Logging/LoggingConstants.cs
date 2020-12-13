@@ -22,8 +22,8 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Logging
 
         internal enum CheckPoint
         {
-            Publisher,
-            Subscriber
+            WebhookFunc,
+            PullRequestFunc
         }
 
         /// <summary>
@@ -31,13 +31,19 @@ namespace WhatIsTheCurrentSprint.FunctionApp.Logging
         /// </summary>
         internal enum EventId
         {
-            WebhookFunctionProcessingStart = 1000,
-            WebhookFunctionProcessingSucceeded = 1001,
-            WebhookFunctionProcessingFailed = 1005,
-            PullRequestProcessingStart = 1100,
-            PullRequestProcessingSucceeded = 1101,
-            PullRequestFailedInvalidData = 1105,
-            PullRequestFailedUnhandledException = 1106
+            WebhookFunctionStart = 1000,
+            WebhookFunctionDebug = 1010,
+            WebhookFunctionSucceeded = 1020,
+            WebhookFunctionError = 1040,
+            WebhookFunctionFailed = 1050,
+            WebhookFunctionFailedUnhandledException = 1055,
+            PullRequestStart = 1100,
+            PullRequestDebug = 1110,
+            PullRequestSucceeded = 1120,
+            PullRequestError = 1140,
+            PullRequestFailed = 1150,
+            PullRequestFailedInvalidData = 1151,
+            PullRequestFailedUnhandledException = 1155
         }
 
         internal enum Status
