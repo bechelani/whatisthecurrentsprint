@@ -83,7 +83,10 @@ namespace WhatIsTheCurrentSprint.Admin
                 app.UseHsts();
             }
 
-            app.UseForwardedHeaders();
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedProto
+            });
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
