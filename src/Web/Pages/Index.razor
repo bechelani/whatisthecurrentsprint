@@ -22,9 +22,16 @@ else
         <div class="col-sm col-lg status">
             <h2>Status</h2>
             <p><strong>Start Date: </strong> @sprintInfo.StartDate.ToString("D")</p>
-            <p><strong>Feature Complete Date: </strong> @sprintInfo.CodeCompleteDate.ToString("D")</p>
-            <p><strong>Code Freeze Date: </strong> @sprintInfo.CodeFreezeDate.ToString("D")</p>
+            @if (sprintInfo.CodeCompleteDate.HasValue) {
+                <p><strong>Feature Complete Date: </strong> @sprintInfo.CodeCompleteDate.Value.ToString("D")</p>
+            }
+            @if (sprintInfo.CodeFreezeDate.HasValue) {
+                <p><strong>Code Freeze Date: </strong> @sprintInfo.CodeFreezeDate.Value.ToString("D")</p>
+            }
             <p><strong>End Date: </strong> @sprintInfo.EndDate.ToString("D")</p>
+            @if (sprintInfo.ReleaseDate.HasValue) {
+                <p><strong>Release Date:</strong> @sprintInfo.ReleaseDate.Value.ToString("D")</p>
+            }
             <p><strong>Status: </strong>
             @if (sprintInfo.Status == "development") {
                 <span class="is-development development">Development</span>

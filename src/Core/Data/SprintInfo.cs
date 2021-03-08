@@ -11,15 +11,19 @@ namespace WhatIsTheCurrentSprint.Core.Data
 
         [Required]
         [JsonProperty(PropertyName = "codeCompleteDate")]
-        public DateTime CodeCompleteDate { get; set; }
-        
+        public DateTime? CodeCompleteDate { get; set; }
+
         [Required]
         [JsonProperty(PropertyName = "codeFreezeDate")]
-        public DateTime CodeFreezeDate { get; set; }
-        
+        public DateTime? CodeFreezeDate { get; set; }
+
         [Required]
         [JsonProperty(PropertyName = "endDate")]
         public DateTime EndDate { get; set; }
+
+        [Required]
+        [JsonProperty(PropertyName = "releaseDate")]
+        public DateTime? ReleaseDate { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "sprint")]

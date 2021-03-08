@@ -112,3 +112,7 @@ h2 {
     right: 0.75rem;
     top: 0.5rem;
 }
+
+#components-reconnect-modal {
+    display: none;
+}
