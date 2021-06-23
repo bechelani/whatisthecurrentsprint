@@ -1,8 +1,8 @@
 # Create an Azure Cosmos DB account
 resource "azurerm_cosmosdb_account" "acc" {
   name                = "witcs-cosmosdb"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.witcs.location
+  resource_group_name = azurerm_resource_group.witcs.name
 
   offer_type                = "Standard"
   kind                      = "GlobalDocumentDB"
@@ -13,15 +13,11 @@ resource "azurerm_cosmosdb_account" "acc" {
   }
 
   geo_location {
-    location          = azurerm_resource_group.rg.location
+    location          = azurerm_resource_group.witcs.location
     failover_priority = 0
   }
 
-  tags = {
-    Owner        = "Michel Bechelani"
-    Project      = "WhatIsTheCurrentSprint"
-    Created_Date = "2021-06-22"
-  }
+  tags = var.tags
 }
 
 # Create an Cosmos DB database

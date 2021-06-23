@@ -13,21 +13,21 @@
 az group create `
  --name rg-tf-witcs `
  --location "West US" `
- --tags Owner="Michel Bechelani" Project="WhatIsTheCurrentSprint" Created' 'Date="2021-06-22"
+ --tags owner="Michel Bechelani" project="WhatIsTheCurrentSprint" created_date="2021-06-22"
 
 az storage account create `
- --name satfwitcs `
- --resource-group rg-tf-witcs `
+ --name ayasaterraform `
+ --resource-group rg_common `
  --kind StorageV2 `
  --sku Standard_LRS `
  --https-only true `
  --allow-blob-public-access false `
- --tags Owner="Michel Bechelani" Project="WhatIsTheCurrentSprint" Created' 'Date="2021-06-22"
+ --tags owner="Michel Bechelani" project="WhatIsTheCurrentSprint" created_date="2021-06-22"
 ```
 
 2. Create Shared Access Signare (SAS) Token for the storage accoun
 
-3. Create and ignore the backend configuration file
+3. Create and ignore the backend configuration file inside ./app and ./common
 
 Instead of using Azure Storage Account Access Keys, use short-lived Shared Access Signature (SAS) Tokens. Create a local azure.conf file that looks like this:
 
@@ -41,7 +41,7 @@ sas_token="?sv=2019-12-12…"
 
 Triple check that the azure.conf is added to the .gitignore file so that it is not checked into your code repository.
 
-4. Initialize Terraform
+4. Initialize Terraform inside each module ./app and ./common
 
 ```
 terraform init -backend-config=azure.conf

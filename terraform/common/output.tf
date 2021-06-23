@@ -14,13 +14,7 @@ output "acr-admin_password" {
   sensitive   = true
 }
 
-output "cosmos_db-endpoint" {
-  value       = azurerm_cosmosdb_account.acc.endpoint
-  description = "The endpoint used to connect the Comsos DB account"
-}
-
-output "cosmos_db-primary_readonly_key" {
-  value       = azurerm_cosmosdb_account.acc.primary_readonly_key
-  description = "The primary read-only master key for the Cosmos DB account"
-  sensitive   = true
+output "dns-name_servers" {
+  value       = azurerm_dns_zone.public.name_servers
+  description = "A list of values that make up the NS record for the zone"
 }
