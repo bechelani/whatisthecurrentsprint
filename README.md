@@ -24,3 +24,11 @@ ngrok allows you to expose a web server running on your local machine to the int
 ```
 ngrok http 7071 --host-header localhost
 ```
+
+
+## Deployment
+
+1. Run steps in /terraform to create resources in azure portal
+2. Add new Docker Registry service connection in Azure DevOps
+3. Update /.azure/azure-pipelines.yml file
+    - update `containerRegistry` varible with the service connection name created in step 2
